@@ -562,7 +562,7 @@
     const drop = $('[data-drop]', upForm);
     const input = $('[data-file]', upForm);
     const previews = $('[data-previews]', upForm);
-    const MAX = 6, MAX_BYTES = 10 * 1024 * 1024;
+    const MAX = V.maxImages || 4, MAX_BYTES = V.maxBytes || 10 * 1024 * 1024;
     const OK = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
     let files = [];
     let dragIdx = null;
@@ -592,7 +592,7 @@
       for (const file of list) {
         if (files.length >= MAX) { toast(`Máximo ${MAX} fotos por look.`, { error: true }); break; }
         if (!OK.includes(file.type)) { toast(`«${file.name}» no es un formato válido.`, { error: true }); continue; }
-        if (file.size > MAX_BYTES) { toast(`«${file.name}» pesa más de 10 MB.`, { error: true }); continue; }
+        if (file.size > MAX_BYTES) { toast(`«${file.name}» pesa más de ${Math.round(MAX_BYTES / 1048576)} MB.`, { error: true }); continue; }
         files.push({ file, url: URL.createObjectURL(file) });
       }
       syncInput(); render();

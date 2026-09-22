@@ -42,12 +42,12 @@ export async function processOutfitImage(buffer) {
   const fullName = name('');
   const thumbName = name('-t');
   const full = await base.clone()
-    .resize({ width: 1600, height: 2400, fit: 'inside', withoutEnlargement: true })
-    .webp({ quality: 82, effort: 4 })
+    .resize({ width: 1400, height: 2100, fit: 'inside', withoutEnlargement: true })
+    .webp({ quality: 78, effort: 5 })
     .toBuffer({ resolveWithObject: true });
   const thumb = await base.clone()
-    .resize({ width: 720, height: 1080, fit: 'inside', withoutEnlargement: true })
-    .webp({ quality: 76, effort: 4 })
+    .resize({ width: 640, height: 960, fit: 'inside', withoutEnlargement: true })
+    .webp({ quality: 72, effort: 5 })
     .toBuffer();
   const { dominant } = await base.clone().resize(64).stats();
 
@@ -63,8 +63,8 @@ export async function processAvatar(buffer) {
   if (!meta || !meta.width) throw badImage('La imagen no es válida.');
   const file = name('-a');
   const data = await sharp(buffer, { limitInputPixels: 60_000_000 }).rotate()
-    .resize(400, 400, { fit: 'cover', position: 'attention' })
-    .webp({ quality: 82 })
+    .resize(320, 320, { fit: 'cover', position: 'attention' })
+    .webp({ quality: 78 })
     .toBuffer();
   await save(file, data);
   return file;

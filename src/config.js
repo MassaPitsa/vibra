@@ -100,7 +100,7 @@ export const config = {
   },
 
   limits: {
-    maxImages: 6,
+    maxImages: 4,
     maxImageBytes: 10 * 1024 * 1024,
     postsPerDay: 20,
   },
