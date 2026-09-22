@@ -1,4 +1,6 @@
 import path from 'node:path';
+import { Readable } from 'node:stream';
+import { pipeline } from 'node:stream/promises';
 import express from 'express';
 import session from 'express-session';
 import helmet from 'helmet';
@@ -9,6 +11,8 @@ import { sessionStore } from './session-store.js';
 import { nonce, csrf, limiters } from './security.js';
 import { lookNumber, timeAgo, compact, formatDate, escapeHtml } from './util.js';
 import { icon } from './icons.js';
+import { isRemote, fetchObject, media, mediaAbsolute, checkStorage } from './storage.js';
+import { startDbSync } from './db-sync.js';
 import authRoutes from './routes/auth.js';
 import postRoutes from './routes/posts.js';
 import saveRoutes from './routes/saves.js';
@@ -47,7 +51,7 @@ app.use((req, res, next) => helmet({
       scriptSrc: [`'nonce-${res.locals.nonce}'`, "'strict-dynamic'", 'https:', "'unsafe-inline'"],
       scriptSrcAttr: ["'none'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", 'data:', 'blob:', ...(ads ? ['https:'] : [])],
+      imgSrc: ["'self'", 'data:', 'blob:', ...(config.s3.publicBase ? [config.s3.publicBase] : []), ...(ads ? ['https:'] : [])],
       fontSrc: ["'self'", ...(ads ? ['https://fonts.gstatic.com'] : [])],
       connectSrc: ["'self'", ...(ads ? ['https:'] : [])],
       frameSrc: [...(ads ? ['https:'] : []), ...(ts ? ['https://challenges.cloudflare.com'] : []), ...(!ads && !ts ? ["'none'"] : [])],
@@ -84,13 +88,31 @@ app.use('/fonts/instrument-serif', font('instrument-serif'));
 app.use('/fonts/space-mono', font('space-mono'));
 app.use('/fonts/inter-tight', font('inter-tight'));
 // Las subidas tienen nombres aleatorios e inmutables: caché agresiva y nunca se ejecutan.
-app.use('/media', express.static(config.uploadsDir, {
-  maxAge: '365d', immutable: true, index: false, dotfiles: 'deny', fallthrough: false,
-  setHeaders: (res) => {
-    res.setHeader('Content-Type', 'image/webp');
-    res.setHeader('Content-Security-Policy', "default-src 'none'; sandbox");
-  },
-}));
+const mediaHeaders = (res) => {
+  res.setHeader('Content-Type', 'image/webp');
+  res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+  res.setHeader('Content-Security-Policy', "default-src 'none'; sandbox");
+};
+if (isRemote()) {
+  // Las fotos viven en el bucket S3: se sirven a través de este proxy (mismo origen)
+  // salvo que se configure S3_PUBLIC_BASE_URL, en cuyo caso se enlazan directamente.
+  app.get('/media/:file', async (req, res, next) => {
+    if (!/^[a-f0-9]{32}(-t|-a)?\.webp$/.test(req.params.file)) return next();
+    try {
+      const upstream = await fetchObject(req.params.file);
+      if (!upstream.ok || !upstream.body) return next();
+      mediaHeaders(res);
+      await pipeline(Readable.fromWeb(upstream.body), res);
+    } catch (e) {
+      if (!res.headersSent) next(e);
+    }
+  });
+} else {
+  app.use('/media', express.static(config.uploadsDir, {
+    maxAge: '365d', immutable: true, index: false, dotfiles: 'deny', fallthrough: false,
+    setHeaders: mediaHeaders,
+  }));
+}
 
 app.use(metaRoutes); // robots.txt, sitemap, ads.txt… (sin sesión)
 
@@ -139,7 +161,7 @@ app.use((req, res, next) => {
     path: req.path,
     url: config.siteUrl + req.originalUrl.split('?')[0],
     flash: req.session.flash || null,
-    lookNumber, timeAgo, compact, formatDate, icon, legalVal,
+    lookNumber, timeAgo, compact, formatDate, icon, legalVal, media, mediaAbsolute,
     meta: {},
   });
   if (req.session.flash) delete req.session.flash;
@@ -199,7 +221,7 @@ app.use((err, req, res, next) => {
   if (req.path.startsWith('/api/') || req.accepts(['html', 'json']) === 'json') {
     return res.status(status).json({ error: true, message });
   }
-  Object.assign(res.locals, { lookNumber, timeAgo, compact, formatDate, icon, legalVal });
+  Object.assign(res.locals, { lookNumber, timeAgo, compact, formatDate, icon, legalVal, media, mediaAbsolute });
   res.locals.nonce ??= '';
   res.locals.user ??= null;
   res.locals.config ??= config;
@@ -216,13 +238,21 @@ const server = app.listen(config.port, () => {
   console.log(`\n  VIBRA · La calle también tiene su pasarela\n  → ${config.siteUrl} (puerto ${config.port}, ${config.isProd ? 'producción' : 'desarrollo'})\n`);
   const missing = missingLegalFields();
   if (missing.length) console.warn(`  ⚠  Faltan datos legales en .env: ${missing.join(', ')}\n`);
+  console.log(`  Fotos: ${isRemote() ? `bucket S3 «${config.s3.bucket}»${config.s3.publicBase ? ' (URL pública)' : ' (servidas por la app)'}` : `disco local (${config.uploadsDir})`}`);
+  checkStorage().then((ok) => { if (ok) dbSync = startDbSync(db); });
 });
+let dbSync = null;
 
 // Cierre ordenado (Docker/PM2/Render envían SIGTERM).
 for (const sig of ['SIGTERM', 'SIGINT']) {
   process.on(sig, () => {
-    server.close(() => { db.close(); process.exit(0); });
-    setTimeout(() => process.exit(1), 10_000).unref();
+    setTimeout(() => process.exit(1), 25_000).unref(); // red de seguridad
+    server.close(async () => {
+      // Última copia de la base de datos antes de apagarse (hosting sin disco persistente).
+      await dbSync?.snapshot('de apagado').catch(() => {});
+      db.close();
+      process.exit(0);
+    });
   });
 }
 

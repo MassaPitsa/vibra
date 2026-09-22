@@ -4,13 +4,13 @@
   "private": true,
   "description": "VIBRA — La calle también tiene su pasarela. Comunidad de outfits streetwear.",
   "type": "module",
-  "main": "src/server.js",
+  "main": "src/boot.js",
   "engines": {
     "node": ">=22.13"
   },
   "scripts": {
-    "start": "node --disable-warning=ExperimentalWarning src/server.js",
-    "dev": "node --disable-warning=ExperimentalWarning --watch src/server.js",
+    "start": "node --disable-warning=ExperimentalWarning src/boot.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch src/boot.js",
     "make-admin": "node --disable-warning=ExperimentalWarning scripts/make-admin.js",
     "backup": "node --disable-warning=ExperimentalWarning scripts/backup.js",
     "assets": "node scripts/build-assets.js"
@@ -29,5 +29,9 @@
     "multer": "^2.4.0",
     "nodemailer": "^10.0.10",
     "sharp": "^0.35.4"
+  },
+  "devDependencies": {
+    "@aws-crypto/sha256-js": "^5.2.0",
+    "@aws-sdk/signature-v4": "^3.370.0"
   }
 }

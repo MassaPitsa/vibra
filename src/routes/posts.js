@@ -5,6 +5,7 @@ import { config } from '../config.js';
 import { requireAuth, csrfMultipart, limiters } from '../security.js';
 import { uploader, processOutfitImage, removeFiles } from '../images.js';
 import { feed, getLook, topTags, topCities, siteStats, SORTS, userLooks } from '../queries.js';
+import { mediaAbsolute } from '../storage.js';
 import { clean, parseTags, parsePieces, intParam, httpError, lookNumber, EMAIL_RE } from '../util.js';
 
 const r = Router();
@@ -83,7 +84,7 @@ r.get('/look/:id', (req, res, next) => {
     meta: {
       title,
       description: (look.description || `Outfit streetwear de @${look.username}${look.city ? ' en ' + look.city : ''}.`).slice(0, 160),
-      image: look.cover ? `${config.siteUrl}/media/${look.cover.file}` : null,
+      image: look.cover ? mediaAbsolute(look.cover.file) : null,
       type: 'article',
       noindex: look.status !== 'published',
     },

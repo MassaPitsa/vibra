@@ -29,7 +29,7 @@
       </div>
       <% } else { %>
         <div class="previews" style="display:grid">
-          <% edit.images.forEach((img, i) => { %><div class="preview" style="cursor:default"><img src="/media/<%= img.thumb %>" alt=""><% if (i === 0) { %><span class="tag">Portada</span><% } %></div><% }) %>
+          <% edit.images.forEach((img, i) => { %><div class="preview" style="cursor:default"><img src="<%= media(img.thumb) %>" alt=""><% if (i === 0) { %><span class="tag">Portada</span><% } %></div><% }) %>
         </div>
         <p class="muted" style="font-size:13px;margin-top:12px">Las fotos no se pueden cambiar. Si quieres otras, elimina el look y súbelo de nuevo.</p>
       <% } %>

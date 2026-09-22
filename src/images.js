@@ -1,9 +1,8 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
 import crypto from 'node:crypto';
 import multer from 'multer';
 import sharp from 'sharp';
 import { config } from './config.js';
+import { save, remove } from './storage.js';
 
 sharp.cache(false);
 sharp.concurrency(2);
@@ -52,8 +51,8 @@ export async function processOutfitImage(buffer) {
     .toBuffer();
   const { dominant } = await base.clone().resize(64).stats();
 
-  await fs.writeFile(path.join(config.uploadsDir, fullName), full.data, { flag: 'wx' });
-  await fs.writeFile(path.join(config.uploadsDir, thumbName), thumb, { flag: 'wx' });
+  await save(fullName, full.data);
+  await save(thumbName, thumb);
 
   const hex = '#' + [dominant.r, dominant.g, dominant.b].map((v) => v.toString(16).padStart(2, '0')).join('');
   return { file: fullName, thumb: thumbName, width: full.info.width, height: full.info.height, color: hex };
@@ -67,16 +66,11 @@ export async function processAvatar(buffer) {
     .resize(400, 400, { fit: 'cover', position: 'attention' })
     .webp({ quality: 82 })
     .toBuffer();
-  await fs.writeFile(path.join(config.uploadsDir, file), data, { flag: 'wx' });
+  await save(file, data);
   return file;
 }
 
-export async function removeFiles(...files) {
-  await Promise.all(files.filter(Boolean).map((f) => {
-    const safe = path.basename(f); // nunca borrar fuera de la carpeta de subidas
-    return fs.unlink(path.join(config.uploadsDir, safe)).catch(() => {});
-  }));
-}
+export const removeFiles = remove;
 
 function badImage(msg) {
   return Object.assign(new Error(msg), { status: 400, expose: true });

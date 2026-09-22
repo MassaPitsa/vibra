@@ -1,7 +1,7 @@
 <% items.forEach((look) => { const c = look.cover; if (!c) return; %>
 <section class="slide" data-slide data-look="<%= look.id %>" aria-label="Look Nº <%= lookNumber(look.id) %>: <%= look.title %>">
-  <div class="slide__bg" style="background-image:url('/media/<%= c.thumb %>')" aria-hidden="true"></div>
-  <img class="slide__img" src="/media/<%= c.file %>" width="<%= c.w %>" height="<%= c.h %>" alt="<%= look.title %> — outfit de @<%= look.username %>" loading="lazy" decoding="async">
+  <div class="slide__bg" style="background-image:url('<%= media(c.thumb) %>')" aria-hidden="true"></div>
+  <img class="slide__img" src="<%= media(c.file) %>" width="<%= c.w %>" height="<%= c.h %>" alt="<%= look.title %> — outfit de @<%= look.username %>" loading="lazy" decoding="async">
   <div class="slide__info">
     <span class="kicker kicker--accent">Look Nº <%= lookNumber(look.id) %><% if (look.city) { %> · <%= look.city %><% } %></span>
     <h2 class="display"><%= look.title %></h2>

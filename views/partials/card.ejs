@@ -6,8 +6,8 @@
 <article class="card reveal <%= look.status === 'removed' ? 'card--removed' : '' %>" data-look="<%= look.id %>" style="--delay: <%= ((i || 0) % 4) * 0.08 %>s">
   <div class="card__media" style="--c: <%= c ? c.color : '#1c1c1c' %>" data-cursor="view">
     <% if (c) { %>
-      <img src="/media/<%= c.thumb %>" width="<%= Math.min(c.w, 720) %>" height="<%= Math.round(Math.min(c.w, 720) * c.h / c.w) %>" alt="<%= look.title %> — outfit de @<%= look.username %>" loading="<%= (i || 0) < 4 ? 'eager' : 'lazy' %>" decoding="async">
-      <% if (alt) { %><img class="alt" src="/media/<%= alt.thumb %>" alt="" loading="lazy" decoding="async"><% } %>
+      <img src="<%= media(c.thumb) %>" width="<%= Math.min(c.w, 720) %>" height="<%= Math.round(Math.min(c.w, 720) * c.h / c.w) %>" alt="<%= look.title %> — outfit de @<%= look.username %>" loading="<%= (i || 0) < 4 ? 'eager' : 'lazy' %>" decoding="async">
+      <% if (alt) { %><img class="alt" src="<%= media(alt.thumb) %>" alt="" loading="lazy" decoding="async"><% } %>
     <% } %>
     <span class="card__num">Look Nº <%= lookNumber(look.id) %></span>
     <% if (look.images.length > 1) { %><span class="card__multi"><%= look.images.length %> fotos</span><% } %>

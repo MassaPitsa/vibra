@@ -58,6 +58,22 @@ export const config = {
     cmp: env.CMP_MODE === 'google' ? 'google' : 'own',
   },
 
+  // Almacenamiento de fotos compatible con S3 (Cloudflare R2, Backblaze B2, Wasabi…).
+  // Si S3_BUCKET está vacío, las fotos se guardan en el disco local (DATA_DIR/uploads).
+  s3: {
+    endpoint: (env.S3_ENDPOINT || '').replace(/\/$/, ''),
+    bucket: env.S3_BUCKET || '',
+    region: env.S3_REGION || 'auto',
+    accessKey: env.S3_ACCESS_KEY_ID || '',
+    secretKey: env.S3_SECRET_ACCESS_KEY || '',
+    // URL pública del bucket (opcional). Si está vacía, las fotos se sirven a través de /media.
+    publicBase: (env.S3_PUBLIC_BASE_URL || '').replace(/\/$/, ''),
+  },
+
+  // Copia automática de la base de datos al bucket (para servidores sin disco persistente).
+  // 0 = desactivado. Sólo se aplica si hay bucket S3 configurado.
+  dbSync: { minutes: Number(env.DB_SYNC_MINUTES ?? 5) },
+
   // Cloudflare Turnstile (anti-bots, opcional y respetuoso con la privacidad).
   turnstile: {
     siteKey: env.TURNSTILE_SITE_KEY || '',

@@ -17,7 +17,7 @@
     <tbody>
     <% reports.forEach((r) => { %>
       <tr>
-        <td><a href="/look/<%= r.post_id %>" target="_blank"><% if (r.thumb) { %><img src="/media/<%= r.thumb %>" alt=""><% } %></a><div class="mono" style="font-size:11px;margin-top:6px">Nº <%= lookNumber(r.post_id) %> · @<%= r.author %><br><%= r.same %> denuncia(s)</div></td>
+        <td><a href="/look/<%= r.post_id %>" target="_blank"><% if (r.thumb) { %><img src="<%= media(r.thumb) %>" alt=""><% } %></a><div class="mono" style="font-size:11px;margin-top:6px">Nº <%= lookNumber(r.post_id) %> · @<%= r.author %><br><%= r.same %> denuncia(s)</div></td>
         <td><strong><%= reasons[r.reason] || r.reason %></strong><div class="muted mono" style="font-size:11px"><%= timeAgo(r.created_at) %></div></td>
         <td style="max-width:360px;white-space:pre-line"><%= r.details || '—' %><% if (r.contact) { %><div class="muted mono" style="font-size:11px;margin-top:6px">Contacto: <%= r.contact %></div><% } %></td>
         <td>

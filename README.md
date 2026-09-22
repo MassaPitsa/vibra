@@ -93,6 +93,22 @@ docker run -d --name vibra --restart unless-stopped -p 127.0.0.1:3000:3000 -v vi
 Pon delante **Caddy** (HTTPS automático) con un `Caddyfile` de una línea: `tudominio.com { reverse_proxy 127.0.0.1:3000 }`.
 Recomendado: **Cloudflare** delante (DNS con proxy) para protección DDoS gratuita.
 
+### Opción C — Hosting gratuito (sin disco propio)
+
+La app puede funcionar **sin disco persistente**: guarda las fotos en un bucket compatible con S3 y replica la base de datos en ese mismo bucket, restaurándola sola al arrancar. Así valen alojamientos gratuitos como Render, Northflank o Koyeb.
+
+1. **Almacenamiento (gratis):** crea un bucket en [Cloudflare R2](https://dash.cloudflare.com) (10 GB gratis, sin coste de salida) o Backblaze B2. Genera una clave de API con permiso de lectura y escritura sobre ese bucket.
+2. Rellena en el hosting: `S3_ENDPOINT`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` y, si haces el bucket público, `S3_PUBLIC_BASE_URL`.
+3. **Servidor:** en Render usa el archivo `render.yaml` incluido (Blueprint). Pon `DATA_DIR=/tmp/vibra`.
+4. Comprueba en los registros del arranque que dice «Base de datos restaurada desde el bucket» (a partir del segundo despliegue) y «copia … subida».
+
+Cómo funciona la protección de datos:
+- Cada `DB_SYNC_MINUTES` (5 por defecto) y **al apagarse**, la app sube una copia coherente de la base de datos al bucket, más una copia diaria con 7 días de retención.
+- Al arrancar, si el disco está vacío, la descarga del bucket. Si la copia existe pero la app arrancó vacía (bucket mal configurado), **se niega a subir nada y se detiene** para no destruir tus datos.
+- Ventana de pérdida máxima ante un corte brusco: los minutos de `DB_SYNC_MINUTES`. Las fotos nunca se pierden: van directas al bucket.
+
+> En el plan gratuito de Render la web **se duerme** tras 15 minutos sin visitas y tarda ~50 s en despertar. Para empezar vale; cuando tengas visitas reales, pasa al plan de pago (7 $/mes) o a Northflank, que no duerme. Mover la web de un sitio a otro ahora es trivial: los datos ya no viven en el servidor.
+
 ### Copias de seguridad
 `npm run backup` hace una copia en caliente de la base de datos (guarda las 14 últimas). Prográmalo a diario y copia también `data/uploads`.
 

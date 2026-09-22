@@ -3,7 +3,7 @@
 <main id="main">
   <div class="prose-wrap">
     <div>
-      <% if (look.cover) { %><img src="/media/<%= look.cover.thumb %>" alt="" style="width:100%;max-width:260px" loading="lazy"><% } %>
+      <% if (look.cover) { %><img src="<%= media(look.cover.thumb) %>" alt="" style="width:100%;max-width:260px" loading="lazy"><% } %>
       <p class="kicker" style="margin-top:12px">Look Nº <%= lookNumber(look.id) %> · @<%= look.username %></p>
     </div>
     <div class="prose" style="max-width:620px">

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { db } from '../db.js';
 import { config } from '../config.js';
+import { mediaAbsolute } from '../storage.js';
 
 const r = Router();
 const site = config.siteUrl;
@@ -45,7 +46,7 @@ r.get('/sitemap.xml', (req, res) => {
   const body = [
     ...statics.map((p) => `<url><loc>${site}${p}</loc></url>`),
     ...users.map((u) => `<url><loc>${site}/u/${xmlEscape(u.username)}</loc><lastmod>${iso(u.last)}</lastmod></url>`),
-    ...looks.map((l) => `<url><loc>${site}/look/${l.id}</loc><lastmod>${iso(l.created_at)}</lastmod>${l.img ? `<image:image><image:loc>${site}/media/${l.img}</image:loc><image:title>${xmlEscape(l.title)}</image:title></image:image>` : ''}</url>`),
+    ...looks.map((l) => `<url><loc>${site}/look/${l.id}</loc><lastmod>${iso(l.created_at)}</lastmod>${l.img ? `<image:image><image:loc>${mediaAbsolute(l.img)}</image:loc><image:title>${xmlEscape(l.title)}</image:title></image:image>` : ''}</url>`),
   ].join('\n');
   res.type('application/xml').set('Cache-Control', 'public, max-age=1800').send(
 `<?xml version="1.0" encoding="UTF-8"?>

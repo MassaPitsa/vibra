@@ -30,7 +30,7 @@
       <a href="/subir" class="btn-plus magnetic" aria-label="Subir un look" title="Subir look">+</a>
       <div class="menu" data-menu>
         <button type="button" aria-haspopup="true" aria-expanded="false" aria-label="Menú de cuenta" data-menu-btn>
-          <% if (user.avatar) { %><img class="avatar" src="/media/<%= user.avatar %>" alt="" width="34" height="34"><% } else { %><span class="avatar"><%= user.username[0].toUpperCase() %></span><% } %>
+          <% if (user.avatar) { %><img class="avatar" src="<%= media(user.avatar) %>" alt="" width="34" height="34"><% } else { %><span class="avatar"><%= user.username[0].toUpperCase() %></span><% } %>
         </button>
         <div class="menu__panel" role="menu">
           <a href="/u/<%= user.username %>" role="menuitem">Mi perfil · @<%= user.username %></a>

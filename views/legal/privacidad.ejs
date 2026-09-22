@@ -48,6 +48,7 @@
   <p>No vendemos tus datos. Sólo los comunicamos a:</p>
   <ul>
     <li><strong>Proveedor de alojamiento</strong> (hosting) de la Plataforma, como encargado del tratamiento.</li>
+    <% if (config.s3.bucket) { %><li><strong>Proveedor de almacenamiento en la nube</strong>, donde se guardan las fotografías y las copias de seguridad, como encargado del tratamiento.</li><% } %>
     <li><strong>Proveedor de email</strong> para envíos transaccionales (recuperación de contraseña), como encargado.</li>
     <% if (config.turnstile.siteKey) { %><li><strong>Cloudflare, Inc.</strong> (Turnstile), para verificar que los registros no provienen de bots.</li><% } %>
     <li><strong>Google Ireland Ltd. / Google LLC</strong> (AdSense), para la publicidad, conforme a tu elección de cookies.</li>

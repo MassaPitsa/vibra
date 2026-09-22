@@ -14,13 +14,13 @@
 
   <nav class="tickets" aria-label="Colecciones">
     <a class="ticket <%= !active ? 'is-active' : '' %>" href="/guardados" <%- !active ? 'aria-current="page"' : '' %>>
-      <div class="ticket__cover <%= allCovers.length === 1 ? 'one' : '' %>"><% if (allCovers.length) { allCovers.forEach((t) => { %><img src="/media/<%= t %>" alt="" loading="lazy"><% }) } else { %><span class="ph"><%- icon('bookmark').replace('<svg', '<svg style="width:40px;height:40px"') %></span><% } %></div>
+      <div class="ticket__cover <%= allCovers.length === 1 ? 'one' : '' %>"><% if (allCovers.length) { allCovers.forEach((t) => { %><img src="<%= media(t) %>" alt="" loading="lazy"><% }) } else { %><span class="ph"><%- icon('bookmark').replace('<svg', '<svg style="width:40px;height:40px"') %></span><% } %></div>
       <div class="ticket__body"><p class="ticket__name">Todos</p><span class="muted mono" style="font-size:11px"><%= totalSaved %> looks</span></div>
       <div class="ticket__stub"><span>Admit all</span><span>Nº 000</span></div>
     </a>
     <% collections.forEach((c, i) => { const cv = ticketCover(c.covers); %>
       <a class="ticket <%= active && active.id === c.id ? 'is-active' : '' %>" href="/guardados?c=<%= c.id %>" <%- active && active.id === c.id ? 'aria-current="page"' : '' %>>
-        <div class="ticket__cover <%= cv.length === 1 ? 'one' : '' %>"><% if (cv.length) { cv.forEach((t) => { %><img src="/media/<%= t %>" alt="" loading="lazy"><% }) } else { %><span class="ph"><%= c.name[0].toUpperCase() %></span><% } %></div>
+        <div class="ticket__cover <%= cv.length === 1 ? 'one' : '' %>"><% if (cv.length) { cv.forEach((t) => { %><img src="<%= media(t) %>" alt="" loading="lazy"><% }) } else { %><span class="ph"><%= c.name[0].toUpperCase() %></span><% } %></div>
         <div class="ticket__body"><p class="ticket__name"><%= c.name %></p><span class="muted mono" style="font-size:11px"><%= c.count %> looks<%= c.is_public ? ' · pública' : ' · privada' %></span></div>
         <div class="ticket__stub"><span>Admit one</span><span>Nº <%= lookNumber(i + 1) %></span></div>
       </a>
@@ -71,7 +71,7 @@
     </div>
     <div class="picker">
       <% pickable.forEach((l) => { if (!l.cover) return; %>
-        <label><input type="checkbox" name="add" value="<%= l.id %>"><img src="/media/<%= l.cover.thumb %>" alt="<%= l.title %>" loading="lazy"><span class="ck" aria-hidden="true"></span></label>
+        <label><input type="checkbox" name="add" value="<%= l.id %>"><img src="<%= media(l.cover.thumb) %>" alt="<%= l.title %>" loading="lazy"><span class="ck" aria-hidden="true"></span></label>
       <% }) %>
     </div>
     <div class="picker-foot">

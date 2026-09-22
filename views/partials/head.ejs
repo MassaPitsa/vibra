@@ -46,7 +46,7 @@
     gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', functionality_storage: 'granted', security_storage: 'granted', wait_for_update: 500 });
     gtag('set', 'ads_data_redaction', true);
     <% if (consent) { %>gtag('consent', 'update', { ad_storage: '<%= consent.ads ? "granted" : "denied" %>', ad_user_data: '<%= consent.ads ? "granted" : "denied" %>', ad_personalization: '<%= consent.personalized ? "granted" : "denied" %>' });<% } %>
-    window.VIBRA = { ads: <%- JSON.stringify(adsOn ? { client: config.adsense.client, cmp: config.adsense.cmp } : null) %>, csrf: <%- JSON.stringify(csrf || '') %>, user: <%- JSON.stringify(user ? { username: user.username } : null) %> };
+    window.VIBRA = { ads: <%- JSON.stringify(adsOn ? { client: config.adsense.client, cmp: config.adsense.cmp } : null) %>, csrf: <%- JSON.stringify(csrf || '') %>, user: <%- JSON.stringify(user ? { username: user.username } : null) %>, mediaBase: <%- JSON.stringify(config.s3.publicBase || '') %> };
   </script>
   <% if (loadAds) { %>
   <script async nonce="<%= nonce %>" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=<%= encodeURIComponent(config.adsense.client) %>" crossorigin="anonymous"></script>

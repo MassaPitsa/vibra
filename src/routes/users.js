@@ -6,6 +6,7 @@ import { requireAuth, csrfMultipart, limiters, verifyPassword, hashPassword, pas
 import { uploader, processAvatar, removeFiles } from '../images.js';
 import { userLooks, collectionsOf } from '../queries.js';
 import { clean, safeInstagram, httpError, USERNAME_RE } from '../util.js';
+import { mediaAbsolute } from '../storage.js';
 
 const r = Router();
 
@@ -27,7 +28,7 @@ r.get('/u/:username', (req, res, next) => {
     meta: {
       title: `${profile.display_name || profile.username} (@${profile.username})`,
       description: profile.bio || `Los outfits streetwear de @${profile.username} en VIBRA.`,
-      image: profile.avatar ? `${config.siteUrl}/media/${profile.avatar}` : null,
+      image: profile.avatar ? mediaAbsolute(profile.avatar) : null,
       type: 'profile',
       noindex: stats.looks === 0,
     },
@@ -99,7 +100,7 @@ r.get('/ajustes/exportar', requireAuth, (req, res) => {
     service: config.siteName,
     account: db.prepare('SELECT username, email, display_name, bio, city, instagram, role, terms_version, terms_accepted_at, created_at FROM users WHERE id = ?').get(id),
     looks: db.prepare('SELECT id, title, description, city, tags, pieces, status, save_count, view_count, created_at FROM posts WHERE user_id = ?').all(id)
-      .map((p) => ({ ...p, url: `${config.siteUrl}/look/${p.id}`, images: db.prepare('SELECT file FROM post_images WHERE post_id = ? ORDER BY position').all(p.id).map((i) => `${config.siteUrl}/media/${i.file}`) })),
+      .map((p) => ({ ...p, url: `${config.siteUrl}/look/${p.id}`, images: db.prepare('SELECT file FROM post_images WHERE post_id = ? ORDER BY position').all(p.id).map((i) => mediaAbsolute(i.file)) })),
     saved: db.prepare('SELECT post_id, created_at FROM saves WHERE user_id = ?').all(id),
     collections: db.prepare('SELECT id, name, is_public, created_at FROM collections WHERE user_id = ?').all(id)
       .map((c) => ({ ...c, posts: db.prepare('SELECT post_id FROM collection_items WHERE collection_id = ?').all(c.id).map((x) => x.post_id) })),

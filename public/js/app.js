@@ -309,7 +309,7 @@
     }
     list.replaceChildren(...cols.map((c) => {
       const cover = h('span', { class: 'cv' });
-      if (c.cover) cover.append(h('img', { src: `/media/${c.cover}`, alt: '' })); else cover.textContent = c.name.charAt(0).toUpperCase();
+      if (c.cover) cover.append(h('img', { src: (V.mediaBase || '/media') + '/' + encodeURIComponent(c.cover), alt: '' })); else cover.textContent = c.name.charAt(0).toUpperCase();
       const ck = h('span', { class: 'ck' }); ck.innerHTML = ICON.check; // SVG estático
       const count = h('span', { text: `${c.count} looks${c.is_public ? ' · pública' : ''}` });
       const btn = h('button', { type: 'button', 'aria-pressed': c.has ? 'true' : 'false' }, cover, h('span', { class: 'nm' }, h('b', { text: c.name }), count), ck);

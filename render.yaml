@@ -1,0 +1,48 @@
+# Plano de despliegue para Render (Blueprint).
+# Al crear el servicio desde el repositorio, Render lee este archivo.
+# Las variables marcadas con sync:false se rellenan a mano en el panel (son secretas).
+services:
+  - type: web
+    name: vibra
+    runtime: docker
+    plan: free           # cámbialo a "starter" si no quieres que la web se duerma
+    region: frankfurt    # el más cercano a España
+    healthCheckPath: /healthz
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: DATA_DIR
+        value: /tmp/vibra           # disco efímero: la BD se replica al bucket S3
+      - key: TRUST_PROXY
+        value: 1
+      - key: SITE_URL
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: LEGAL_OWNER_NAME
+        sync: false
+      - key: LEGAL_OWNER_ID
+        sync: false
+      - key: LEGAL_OWNER_ADDRESS
+        sync: false
+      - key: LEGAL_CONTACT_EMAIL
+        sync: false
+      - key: S3_ENDPOINT
+        sync: false
+      - key: S3_BUCKET
+        sync: false
+      - key: S3_REGION
+        value: auto
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false
+      - key: S3_PUBLIC_BASE_URL
+        sync: false
+      - key: DB_SYNC_MINUTES
+        value: 5

@@ -33,7 +33,7 @@
         <% if (heroLooks.length) { %>
           <% heroLooks.forEach((l) => { %>
             <a class="hero__card" href="/look/<%= l.id %>" data-cursor="view">
-              <img src="/media/<%= l.cover.thumb %>" alt="<%= l.title %>" width="<%= Math.min(l.cover.w, 720) %>" height="<%= Math.round(Math.min(l.cover.w, 720) * l.cover.h / l.cover.w) %>" fetchpriority="high">
+              <img src="<%= media(l.cover.thumb) %>" alt="<%= l.title %>" width="<%= Math.min(l.cover.w, 720) %>" height="<%= Math.round(Math.min(l.cover.w, 720) * l.cover.h / l.cover.w) %>" fetchpriority="high">
               <figcaption>Look Nº <%= lookNumber(l.id) %> · @<%= l.username %></figcaption>
             </a>
           <% }) %>
@@ -54,7 +54,7 @@
     <div class="runway-strip__track">
       <% for (let k = 0; k < 2; k++) { items.slice(0, 12).forEach((l) => { if (!l.cover) return; %>
         <a class="runway-strip__item" href="/look/<%= l.id %>" <%- k ? 'aria-hidden="true" tabindex="-1"' : '' %>>
-          <img src="/media/<%= l.cover.thumb %>" alt="<%= k ? '' : l.title %>" loading="lazy">
+          <img src="<%= media(l.cover.thumb) %>" alt="<%= k ? '' : l.title %>" loading="lazy">
           <span>Nº <%= lookNumber(l.id) %></span>
         </a>
       <% }) } %>

@@ -6,7 +6,7 @@
     articleBody: look.description || undefined,
     datePublished: new Date(look.created_at).toISOString(),
     url: config.siteUrl + '/look/' + look.id,
-    image: look.images.map((i) => config.siteUrl + '/media/' + i.file),
+    image: look.images.map((i) => mediaAbsolute(i.file)),
     author: { '@type': 'Person', name: look.display_name || look.username, url: config.siteUrl + '/u/' + look.username },
     interactionStatistic: [{ '@type': 'InteractionCounter', interactionType: 'https://schema.org/BookmarkAction', userInteractionCount: look.save_count }],
   };
@@ -21,13 +21,13 @@
     <div class="gallery" data-gallery>
       <div class="gallery__thumbs" role="tablist" aria-label="Fotos del look">
         <% look.images.forEach((img, i) => { %>
-          <button type="button" role="tab" data-go="<%= i %>" aria-current="<%= i === 0 ? 'true' : 'false' %>" aria-label="Foto <%= i + 1 %>"><img src="/media/<%= img.thumb %>" alt="" loading="lazy"></button>
+          <button type="button" role="tab" data-go="<%= i %>" aria-current="<%= i === 0 ? 'true' : 'false' %>" aria-label="Foto <%= i + 1 %>"><img src="<%= media(img.thumb) %>" alt="" loading="lazy"></button>
         <% }) %>
       </div>
       <div class="gallery__main" style="--c: <%= look.cover ? look.cover.color : '#1c1c1c' %>">
         <div class="gallery__slides" data-slides>
           <% look.images.forEach((img, i) => { %>
-            <figure><img src="/media/<%= img.file %>" width="<%= img.w %>" height="<%= img.h %>" alt="<%= look.title %> — foto <%= i + 1 %> de <%= look.images.length %>" <%- i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' %> decoding="async" data-zoom data-cursor="view"></figure>
+            <figure><img src="<%= media(img.file) %>" width="<%= img.w %>" height="<%= img.h %>" alt="<%= look.title %> — foto <%= i + 1 %> de <%= look.images.length %>" <%- i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' %> decoding="async" data-zoom data-cursor="view"></figure>
           <% }) %>
         </div>
         <% if (look.images.length > 1) { %>
@@ -48,7 +48,7 @@
 
       <div class="sheet__by">
         <a href="/u/<%= look.username %>">
-          <% if (look.avatar) { %><img class="avatar" src="/media/<%= look.avatar %>" alt="" width="44" height="44" style="width:44px;height:44px"><% } else { %><span class="avatar" style="width:44px;height:44px"><%= look.username[0].toUpperCase() %></span><% } %>
+          <% if (look.avatar) { %><img class="avatar" src="<%= media(look.avatar) %>" alt="" width="44" height="44" style="width:44px;height:44px"><% } else { %><span class="avatar" style="width:44px;height:44px"><%= look.username[0].toUpperCase() %></span><% } %>
         </a>
         <div>
           <b><a href="/u/<%= look.username %>" class="link-u"><%= look.display_name || look.username %></a></b>
