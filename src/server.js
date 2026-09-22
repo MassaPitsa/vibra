@@ -140,12 +140,12 @@ app.use(session({
 }));
 
 /* ───────────── Usuario actual + variables de plantilla ───────────── */
-const getUser = db.prepare("SELECT id, username, email, display_name, avatar, role, status FROM users WHERE id = ?");
+const getUser = db.prepare("SELECT id, username, email, display_name, avatar, role, status, email_verified FROM users WHERE id = ?");
 app.use((req, res, next) => {
   if (req.session.userId) {
     const u = getUser.get(req.session.userId);
     if (u && u.status === 'active') {
-      if (config.adminEmail && u.email.toLowerCase() === config.adminEmail && u.role !== 'admin') {
+      if (config.adminEmail && u.email_verified && u.email.toLowerCase() === config.adminEmail && u.role !== 'admin') {
         db.prepare("UPDATE users SET role = 'admin' WHERE id = ?").run(u.id);
         u.role = 'admin';
       }

@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { Router } from 'express';
 import { db } from '../db.js';
 import { config } from '../config.js';
@@ -95,6 +96,22 @@ r.post('/ajustes/password', requireAuth, limiters.auth, async (req, res, next) =
       res.redirect('/ajustes');
     });
   } catch (e) { next(e); }
+});
+
+/* ───────────── Reclamar el rol de administrador con un código secreto ─────────────
+   El alta por email no da permisos porque el correo no está verificado: quien conozca
+   el email del administrador podría adelantarse. Con un código de ADMIN_CLAIM_CODE,
+   sólo quien tenga acceso a la configuración del servidor puede promocionarse. */
+r.post('/ajustes/admin', requireAuth, limiters.auth, (req, res) => {
+  const code = config.adminClaimCode;
+  const sent = String(req.body.code || '');
+  const ok = code.length >= 16 && sent.length === code.length &&
+    crypto.timingSafeEqual(Buffer.from(sent), Buffer.from(code));
+  if (!ok) return renderSettings(req, res, { status: 400, error: 'Código de administración incorrecto.', section: 'seguridad' });
+  db.prepare("UPDATE users SET role = 'admin' WHERE id = ?").run(req.user.id);
+  console.log(`[admin] @${req.user.username} (${req.user.email}) se ha promocionado a administrador`);
+  req.session.flash = { type: 'ok', msg: 'Ya eres administrador: tienes acceso al panel de moderación.' };
+  res.redirect('/admin');
 });
 
 /* ───────────── Derecho de acceso y portabilidad (RGPD arts. 15 y 20) ───────────── */

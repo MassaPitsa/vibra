@@ -15,6 +15,7 @@ db.exec(`
     email         TEXT NOT NULL UNIQUE COLLATE NOCASE,
     password_hash TEXT NOT NULL DEFAULT '',
     google_sub    TEXT,
+    email_verified INTEGER NOT NULL DEFAULT 0,
     display_name  TEXT NOT NULL DEFAULT '',
     bio           TEXT NOT NULL DEFAULT '',
     city          TEXT NOT NULL DEFAULT '',
@@ -113,6 +114,7 @@ db.exec(`
 /* ───────────── Migraciones sobre bases de datos ya existentes ───────────── */
 const userCols = db.prepare('PRAGMA table_info(users)').all().map((c) => c.name);
 if (!userCols.includes('google_sub')) db.exec('ALTER TABLE users ADD COLUMN google_sub TEXT');
+if (!userCols.includes('email_verified')) db.exec('ALTER TABLE users ADD COLUMN email_verified INTEGER NOT NULL DEFAULT 0');
 db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_google ON users(google_sub) WHERE google_sub IS NOT NULL');
 
 export const now = () => Date.now();

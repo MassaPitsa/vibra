@@ -94,7 +94,7 @@ r.get('/auth/google/callback', limiters.auth, async (req, res, next) => {
     const byEmail = db.prepare('SELECT id, status FROM users WHERE email = ?').get(email);
     if (byEmail) {
       if (byEmail.status !== 'active') return fail('Esta cuenta está suspendida.');
-      db.prepare('UPDATE users SET google_sub = ? WHERE id = ?').run(claims.sub, byEmail.id);
+      db.prepare('UPDATE users SET google_sub = ?, email_verified = 1 WHERE id = ?').run(claims.sub, byEmail.id);
       await loginSession(req, byEmail.id);
       req.session.flash = { type: 'ok', msg: 'Hemos conectado tu cuenta de Google.' };
       return res.redirect(nextUrl);
@@ -153,8 +153,8 @@ r.post('/registro/google', limiters.register, async (req, res, next) => {
     const t = now();
     const role = config.adminEmail && p.email === config.adminEmail ? 'admin' : 'user';
     const { lastInsertRowid } = db.prepare(`INSERT INTO users
-      (username, email, password_hash, google_sub, display_name, role, terms_version, terms_accepted_at, created_at)
-      VALUES (?, ?, '', ?, ?, ?, ?, ?, ?)`)
+      (username, email, password_hash, google_sub, email_verified, display_name, role, terms_version, terms_accepted_at, created_at)
+      VALUES (?, ?, '', ?, 1, ?, ?, ?, ?, ?)`)
       .run(username, p.email, p.sub, p.name || username, role, TERMS_VERSION, t, t);
 
     delete req.session.pendingGoogle;

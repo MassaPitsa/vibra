@@ -59,9 +59,9 @@ r.post('/registro', limiters.register, async (req, res, next) => {
 
     const hash = await hashPassword(password);
     const t = now();
-    const role = config.adminEmail && form.email === config.adminEmail ? 'admin' : 'user';
+    // El alta por email nunca da administrador: el correo aún no está verificado.
     const { lastInsertRowid } = db.prepare(`INSERT INTO users (username, email, password_hash, display_name, role, terms_version, terms_accepted_at, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`).run(form.username, form.email, hash, form.username, role, TERMS_VERSION, t, t);
+      VALUES (?, ?, ?, ?, 'user', ?, ?, ?)`).run(form.username, form.email, hash, form.username, TERMS_VERSION, t, t);
 
     await login(req, Number(lastInsertRowid));
     req.session.flash = { type: 'ok', msg: `Bienvenid@ a la pasarela, @${form.username}.` };

@@ -47,6 +47,16 @@
         <button class="btn btn--ghost" type="submit"><%= me.hasPassword ? 'Cambiar contraseña' : 'Crear contraseña' %></button>
       </form>
 
+      <% if (config.adminClaimCode && (!user || user.role !== 'admin')) { %>
+        <h3>Acceso de administración</h3>
+        <p class="muted" style="font-size:14px">Si eres la persona responsable del sitio, introduce el código de administración configurado en el servidor.</p>
+        <form method="post" action="/ajustes/admin">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <div class="field"><label for="claim">Código de administración</label><input id="claim" name="code" type="password" autocomplete="off" required></div>
+          <button class="btn btn--ghost btn--sm" type="submit">Activar moderación</button>
+        </form>
+      <% } %>
+
       <h2 id="privacidad">Tus datos</h2>
       <p>Aceptaste los Términos (versión <%= me.terms_version %>) el <%= formatDate(me.terms_accepted_at) %>. Cuenta creada el <%= formatDate(me.created_at) %>.</p>
       <p>Puedes descargar una copia de todos tus datos en formato JSON (derecho de acceso y portabilidad, arts. 15 y 20 RGPD).</p>

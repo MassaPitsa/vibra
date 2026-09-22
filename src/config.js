@@ -37,6 +37,8 @@ export const config = {
   dbFile: path.join(DATA_DIR, 'vibra.db'),
   sessionSecret: sessionSecret(),
   adminEmail: (env.ADMIN_EMAIL || '').toLowerCase().trim(),
+  // Código secreto para reclamar el rol de administrador desde Ajustes (mínimo 16 caracteres).
+  adminClaimCode: (env.ADMIN_CLAIM_CODE || '').trim(),
 
   // Datos del titular — obligatorios por la LSSI-CE (art. 10) y el RGPD (art. 13).
   legal: {
