@@ -37,7 +37,11 @@ r.get('/u/:username', (req, res, next) => {
 
 /* ───────────── Ajustes de cuenta ───────────── */
 const renderSettings = (req, res, extra = {}) => {
-  const me = db.prepare('SELECT username, email, display_name, bio, city, instagram, avatar, created_at, terms_version, terms_accepted_at FROM users WHERE id = ?').get(req.user.id);
+  const me = db.prepare('SELECT username, email, display_name, bio, city, instagram, avatar, created_at, terms_version, terms_accepted_at, google_sub, password_hash FROM users WHERE id = ?').get(req.user.id);
+  me.hasGoogle = Boolean(me.google_sub);
+  me.hasPassword = Boolean(me.password_hash);
+  delete me.password_hash;
+  delete me.google_sub;
   res.status(extra.status || 200).render('settings', { me, error: null, section: null, meta: { title: 'Ajustes', noindex: true }, ...extra });
 };
 
@@ -74,7 +78,8 @@ r.post('/ajustes/avatar', requireAuth, limiters.upload, avatarUpload.single('ava
 r.post('/ajustes/password', requireAuth, limiters.auth, async (req, res, next) => {
   try {
     const row = db.prepare('SELECT password_hash, username, email FROM users WHERE id = ?').get(req.user.id);
-    if (!(await verifyPassword(String(req.body.current || ''), row.password_hash))) {
+    // Quien entró con Google todavía no tiene contraseña: puede crear una sin pedir la anterior.
+    if (row.password_hash && !(await verifyPassword(String(req.body.current || ''), row.password_hash))) {
       return renderSettings(req, res, { status: 400, error: 'La contraseña actual no es correcta.', section: 'seguridad' });
     }
     const pw = String(req.body.password || '');

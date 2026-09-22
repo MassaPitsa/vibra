@@ -1,0 +1,35 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main" class="auth">
+  <section class="auth__poster" data-tilt-area>
+    <span class="kicker kicker--accent">Último paso · casting FW26</span>
+    <p class="display">Elige tu<br><span class="serif accent">nombre</span><br>de pasarela</p>
+    <div class="pass" data-tilt aria-hidden="true">
+      <div class="pass__top"><span>Backstage</span><span>FW26</span></div>
+      <div>
+        <div class="pass__big">All<br>access</div>
+        <div class="pass__name" data-pass-name>@<%= username %></div>
+      </div>
+      <div class="pass__bar"></div>
+      <div class="pass__strip">Model · <%= config.siteName %></div>
+    </div>
+  </section>
+  <section class="auth__form">
+    <h1 class="display">Casi está</h1>
+    <p class="muted" style="margin:0 0 28px">Entras con <strong style="color:var(--paper)"><%= email %></strong>. Solo falta tu alias y aceptar las condiciones.</p>
+    <% if (error) { %><div class="form-error" role="alert"><%= error %></div><% } %>
+    <form method="post" action="/registro/google" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <div class="field">
+        <label for="username">Nombre de usuario</label>
+        <input id="username" name="username" required minlength="3" maxlength="24" pattern="[a-z0-9._]{3,24}" autocapitalize="none" spellcheck="false" value="<%= username %>" data-username>
+        <small>3-24 caracteres: minúsculas, números, «.» o «_». Podrás cambiar tu nombre visible después.</small>
+      </div>
+      <label class="check"><input type="checkbox" name="age" required> <span>Tengo <strong>14 años o más</strong>.</span></label>
+      <label class="check"><input type="checkbox" name="terms" required> <span>Acepto los <a href="/legal/terminos" target="_blank">Términos y condiciones</a> y las <a href="/legal/normas" target="_blank">Normas de la comunidad</a>, y he leído la <a href="/legal/privacidad" target="_blank">Política de privacidad</a>.</span></label>
+      <button class="btn btn--accent btn--block" type="submit" style="margin-top:10px">Entrar al casting <span class="arrow">→</span></button>
+    </form>
+    <p class="auth__alt"><a class="link-u" href="/entrar">Cancelar y volver</a></p>
+  </section>
+</main>
+<%- include('../partials/footer') %>

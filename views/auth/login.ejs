@@ -15,6 +15,7 @@
     <h1 class="display">Entrar</h1>
     <p class="muted" style="margin:0 0 28px">Tus guardados y colecciones te esperan.</p>
     <% if (error) { %><div class="form-error" role="alert"><%= error %></div><% } %>
+    <%- include('../partials/google-btn', { next }) %>
     <form method="post" action="/entrar">
       <input type="hidden" name="_csrf" value="<%= csrf %>">
       <input type="hidden" name="next" value="<%= next %>">

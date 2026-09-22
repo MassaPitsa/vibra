@@ -14,6 +14,7 @@
   <meta name="description" content="<%= desc %>">
   <% if (meta.noindex) { %><meta name="robots" content="noindex, follow"><% } else { %><meta name="robots" content="index, follow, max-image-preview:large"><% } %>
   <link rel="canonical" href="<%= url %>">
+  <% if (config.googleSiteVerification) { %><meta name="google-site-verification" content="<%= config.googleSiteVerification %>"><% } %>
   <meta name="theme-color" content="#0a0a0a">
   <meta name="color-scheme" content="dark">
   <meta name="format-detection" content="telephone=no">

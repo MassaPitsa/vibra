@@ -18,6 +18,7 @@
     <h1 class="display">Crea tu pase</h1>
     <p class="muted" style="margin:0 0 28px">Gratis. Sin invitación. Sólo necesitas estilo.</p>
     <% if (error) { %><div class="form-error" role="alert"><%= error %></div><% } %>
+    <%- include('../partials/google-btn', { next }) %>
     <form method="post" action="/registro" novalidate>
       <input type="hidden" name="_csrf" value="<%= csrf %>">
       <input type="hidden" name="next" value="<%= next %>">

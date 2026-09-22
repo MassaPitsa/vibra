@@ -18,6 +18,7 @@
   <h2>2. Qué datos tratamos</h2>
   <ul>
     <li><strong>Datos de cuenta:</strong> nombre de usuario, email, contraseña (almacenada sólo como hash irreversible con scrypt, nunca en claro), y fecha de aceptación de los términos.</li>
+    <% if (config.google.clientId) { %><li><strong>Acceso con Google (opcional):</strong> si eliges «Continuar con Google», Google nos comunica tu identificador de usuario, tu email verificado y tu nombre, únicamente para crear o identificar tu cuenta. No accedemos a tus contactos, archivos ni a ningún otro dato de tu cuenta de Google, y puedes revocar el acceso desde <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">la configuración de tu cuenta de Google</a>.</li><% } %>
     <li><strong>Datos de perfil (opcionales):</strong> nombre visible, biografía, ciudad, usuario de Instagram y foto de perfil.</li>
     <li><strong>Contenido que publicas:</strong> fotografías de tus looks, título, descripción, ciudad, etiquetas y créditos de prendas. <strong>Eliminamos automáticamente los metadatos de las fotos</strong> (EXIF, incluida la ubicación GPS y el modelo de cámara) al subirlas.</li>
     <li><strong>Actividad:</strong> looks guardados, colecciones que creas y denuncias que envías.</li>

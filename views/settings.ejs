@@ -33,12 +33,18 @@
 
       <h2 id="seguridad">Seguridad</h2>
       <p>Email de la cuenta: <strong><%= me.email %></strong></p>
+      <p>Acceso: <strong><%= me.hasGoogle ? 'cuenta de Google conectada' : 'email y contraseña' %></strong><%= me.hasGoogle && me.hasPassword ? ' + contraseña propia' : '' %>.</p>
+      <% if (me.hasGoogle && !me.hasPassword) { %>
+        <p class="muted" style="font-size:14px">Entras con Google, así que no necesitas contraseña. Si quieres poder entrar también con email y contraseña, créala aquí.</p>
+      <% } %>
       <form method="post" action="/ajustes/password">
         <input type="hidden" name="_csrf" value="<%= csrf %>">
-        <div class="field"><label for="current">Contraseña actual</label><input id="current" name="current" type="password" autocomplete="current-password" required></div>
-        <div class="field"><label for="password">Nueva contraseña</label><input id="password" name="password" type="password" autocomplete="new-password" minlength="10" required><small>Mínimo 10 caracteres. Una frase larga es más segura que una contraseña rara.</small></div>
-        <div class="field"><label for="password2">Repite la nueva contraseña</label><input id="password2" name="password2" type="password" autocomplete="new-password" required></div>
-        <button class="btn btn--ghost" type="submit">Cambiar contraseña</button>
+        <% if (me.hasPassword) { %>
+          <div class="field"><label for="current">Contraseña actual</label><input id="current" name="current" type="password" autocomplete="current-password" required></div>
+        <% } %>
+        <div class="field"><label for="password"><%= me.hasPassword ? 'Nueva contraseña' : 'Crear contraseña' %></label><input id="password" name="password" type="password" autocomplete="new-password" minlength="10" required><small>Mínimo 10 caracteres. Una frase larga es más segura que una contraseña rara.</small></div>
+        <div class="field"><label for="password2">Repítela</label><input id="password2" name="password2" type="password" autocomplete="new-password" required></div>
+        <button class="btn btn--ghost" type="submit"><%= me.hasPassword ? 'Cambiar contraseña' : 'Crear contraseña' %></button>
       </form>
 
       <h2 id="privacidad">Tus datos</h2>

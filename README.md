@@ -124,7 +124,19 @@ Cómo funciona la protección de datos:
 
 ---
 
-## 6. Antes de lanzar (checklist)
+## 6. Acceso con Google (opcional)
+
+El botón «Continuar con Google» aparece solo si defines `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET`.
+
+1. **Verifica tu dominio** en [Search Console](https://search.google.com/search-console) con el método «etiqueta HTML»: copia el código y ponlo en `GOOGLE_SITE_VERIFICATION`; la web lo sirve en todas las páginas. Esto sirve además para el SEO.
+2. En [Google Cloud Console](https://console.cloud.google.com) crea un proyecto → **APIs y servicios → Pantalla de consentimiento de OAuth**: tipo *Externo*, nombre de la app, email de asistencia, enlaces a `/legal/privacidad` y `/legal/terminos`, y añade tu dominio en *Dominios autorizados*.
+3. **Credenciales → Crear credenciales → ID de cliente de OAuth → Aplicación web**. URI de redirección autorizado: `https://TU-DOMINIO/auth/google/callback`.
+4. Copia el ID y el secreto a las variables de entorno.
+5. **Publica la app** (botón *Publicar aplicación* en la pantalla de consentimiento). Con los permisos básicos `openid email profile`, que no son sensibles, no hace falta verificación de Google y **desaparece el límite de 100 usuarios** del modo de pruebas.
+
+Cómo se comporta: si el email de Google ya existe en VIBRA, se enlaza con esa cuenta; si es nuevo, se pide alias y aceptación de condiciones (queda registrada, igual que en el alta normal). Quien entre con Google puede crearse además una contraseña desde Ajustes.
+
+## 7. Antes de lanzar (checklist)
 
 - [ ] Datos legales completos en `.env` y revisados por un profesional si tienes dudas (sobre todo si facturas: alta en Hacienda como autónomo o empresa).
 - [ ] `SESSION_SECRET` largo y aleatorio. `NODE_ENV=production`.
@@ -139,7 +151,7 @@ Cómo funciona la protección de datos:
 
 ---
 
-## 7. Estructura
+## 8. Estructura
 
 ```
 src/            servidor (Express 5 + SQLite nativo de Node)

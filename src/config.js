@@ -77,6 +77,14 @@ export const config = {
   // 0 = desactivado. Sólo se aplica si hay bucket S3 configurado.
   dbSync: { minutes: Number(env.DB_SYNC_MINUTES ?? 5) },
 
+  // Acceso con Google (opcional). Vacío = sólo email y contraseña.
+  google: {
+    clientId: env.GOOGLE_CLIENT_ID || '',
+    clientSecret: env.GOOGLE_CLIENT_SECRET || '',
+  },
+  // Código de verificación de Google Search Console (etiqueta meta).
+  googleSiteVerification: env.GOOGLE_SITE_VERIFICATION || '',
+
   // Cloudflare Turnstile (anti-bots, opcional y respetuoso con la privacidad).
   turnstile: {
     siteKey: env.TURNSTILE_SITE_KEY || '',

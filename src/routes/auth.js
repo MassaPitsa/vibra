@@ -12,6 +12,8 @@ const r = Router();
 const meta = (title) => ({ title, noindex: true });
 
 /** Inicia sesión regenerando el identificador (previene fijación de sesión). */
+export const loginSession = (req, userId) => login(req, userId);
+
 function login(req, userId) {
   return new Promise((resolve, reject) => {
     req.session.regenerate((err) => {

@@ -14,6 +14,7 @@ import { icon } from './icons.js';
 import { isRemote, fetchObject, media, mediaAbsolute, checkStorage } from './storage.js';
 import { startDbSync } from './db-sync.js';
 import authRoutes from './routes/auth.js';
+import googleRoutes from './routes/google.js';
 import postRoutes from './routes/posts.js';
 import saveRoutes from './routes/saves.js';
 import userRoutes from './routes/users.js';
@@ -177,7 +178,8 @@ app.use((req, res, next) => {
   csrf(req, res, next);
 });
 function needsCsrfOnGet(p) {
-  return ['/entrar', '/registro', '/olvide'].includes(p) || p.startsWith('/restablecer/') || p.startsWith('/denunciar/');
+  return ['/entrar', '/registro', '/olvide', '/registro/google'].includes(p) ||
+    p.startsWith('/restablecer/') || p.startsWith('/denunciar/') || p.startsWith('/auth/google');
 }
 
 const LEGAL_ENV = { ownerName: 'LEGAL_OWNER_NAME', ownerId: 'LEGAL_OWNER_ID', ownerAddress: 'LEGAL_OWNER_ADDRESS', contactEmail: 'LEGAL_CONTACT_EMAIL', registry: 'LEGAL_REGISTRY' };
@@ -199,6 +201,7 @@ function parseConsent(cookieHeader = '') {
 /* ───────────── Rutas ───────────── */
 app.use(legalRoutes);
 app.use(authRoutes);
+app.use(googleRoutes);
 app.use(saveRoutes);
 app.use(userRoutes);
 app.use(adminRoutes);

@@ -177,6 +177,10 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
 .btn--danger::before { background: var(--red); }
 .btn--danger:hover { color: var(--ink); }
 .btn[disabled] { opacity: .5; pointer-events: none; }
+.btn--google { --bg: var(--paper); --fg: var(--ink); gap: 12px; font-family: var(--sans); font-weight: 700; letter-spacing: .02em; text-transform: none; font-size: 15px; }
+.btn--google::before { background: #fff; }
+.or { display: flex; align-items: center; gap: 14px; margin: 20px 0; font: 700 10px var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+.or::before, .or::after { content: ''; flex: 1; height: 1px; background: var(--line); }
 .btn .arrow { transition: transform .35s var(--ease); }
 .btn:hover .arrow { transform: translateX(4px); }
 .btn-plus { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: var(--ink); display: grid; place-items: center; font: 400 26px/1 var(--sans); transition: transform .4s var(--ease); }
