@@ -1,0 +1,62 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main"><div class="prose-wrap">
+<%- include('../partials/legal-nav') %>
+<article class="prose">
+  <span class="kicker kicker--accent">Versión 2026-09 · Última actualización: <%= config.legal.lastUpdate %></span>
+  <h1 class="display">Términos y condiciones</h1>
+  <p>Estos Términos regulan el uso de <%= config.siteName %>, prestado por <%- legalVal('ownerName') %> (en adelante, «nosotros»). Al crear una cuenta aceptas estos Términos y las <a href="/legal/normas">Normas de la comunidad</a>, que forman parte de ellos.</p>
+
+  <h2>1. El servicio</h2>
+  <p><%= config.siteName %> permite publicar looks (fotografías de outfits con título, descripción, etiquetas y créditos), explorar los looks de otras personas, guardarlos y organizarlos en colecciones privadas o públicas. El servicio es gratuito y se financia con publicidad.</p>
+
+  <h2>2. Cuenta</h2>
+  <ul>
+    <li>Debes tener <strong>al menos 14 años</strong>. Si eres menor de edad, debes contar con el conocimiento de tus padres o tutores.</li>
+    <li>Los datos que nos facilites deben ser veraces. Tu cuenta es personal e intransferible.</li>
+    <li>Eres responsable de mantener segura tu contraseña. Avísanos si sospechas de un acceso no autorizado.</li>
+    <li>No puedes suplantar a otras personas o marcas ni crear cuentas de forma automatizada.</li>
+  </ul>
+
+  <h2>3. Tu contenido</h2>
+  <p><strong>Tu contenido es tuyo.</strong> Conservas todos los derechos sobre las fotos y textos que publicas. Para poder prestar el servicio, nos concedes una licencia <strong>no exclusiva, gratuita, mundial y sublicenciable únicamente a nuestros proveedores técnicos</strong> para alojar, reproducir, adaptar técnicamente (por ejemplo, redimensionar o convertir formato), mostrar y comunicar públicamente tu contenido dentro de la Plataforma y en su promoción (por ejemplo, en redes sociales de <%= config.siteName %>, citando tu usuario). La licencia termina cuando borras el contenido o tu cuenta, salvo copias técnicas temporales o contenido que otras personas hayan compartido fuera de la Plataforma.</p>
+  <p>Al publicar, garantizas que:</p>
+  <ul>
+    <li>Eres autor/a de las fotos o tienes los permisos necesarios.</li>
+    <li>Todas las personas identificables que aparecen han dado su <strong>consentimiento</strong> para la publicación (Ley Orgánica 1/1982 de protección del derecho al honor, a la intimidad y a la propia imagen). Si aparece un menor de 14 años, cuentas con el consentimiento de sus progenitores o tutores.</li>
+    <li>El contenido cumple la ley y las Normas de la comunidad.</li>
+  </ul>
+
+  <h2>4. Conducta prohibida</h2>
+  <p>Además de lo indicado en las Normas de la comunidad, está prohibido: publicar contenido ilegal; vulnerar derechos de terceros; acosar a otras personas; enviar spam; vender o promocionar falsificaciones; usar bots o scraping masivo; intentar vulnerar la seguridad de la Plataforma; o eludir las medidas de moderación.</p>
+
+  <h2>5. Moderación de contenidos</h2>
+  <p>Conforme al Reglamento (UE) 2022/2065 de Servicios Digitales (DSA):</p>
+  <ul>
+    <li><strong>Notificaciones:</strong> cualquier persona puede denunciar un contenido mediante el botón «Denunciar» o por email. Las analizamos de forma diligente, no arbitraria y objetiva.</li>
+    <li><strong>Medidas:</strong> podemos retirar contenidos, restringir su visibilidad, o suspender cuentas que incumplan la ley o estas condiciones. La moderación la realizan personas; podemos apoyarnos en herramientas automáticas básicas contra el spam.</li>
+    <li><strong>Declaración de motivos:</strong> si retiramos tu contenido, te indicaremos el motivo de forma visible en tu look.</li>
+    <li><strong>Reclamación:</strong> puedes reclamar contra nuestra decisión en el plazo de 6 meses escribiendo a <%- legalVal('contactEmail') %>. Revisaremos tu reclamación sin demora y te responderemos. También puedes acudir a un órgano de resolución extrajudicial certificado o a los tribunales.</li>
+    <li><strong>Uso indebido:</strong> podemos suspender temporalmente, tras advertencia previa, a quien publique con frecuencia contenido manifiestamente ilícito o envíe denuncias manifiestamente infundadas.</li>
+  </ul>
+
+  <h2>6. Publicidad</h2>
+  <p>Aceptas que la Plataforma muestre publicidad, identificada como tal. Las preferencias de cookies publicitarias se gestionan conforme a la <a href="/legal/cookies">Política de cookies</a>.</p>
+
+  <h2>7. Propiedad de la Plataforma</h2>
+  <p>El software, diseño, marca y elementos de <%= config.siteName %> son nuestros o de nuestros licenciantes. No se te concede ningún derecho sobre ellos más allá del uso normal del servicio.</p>
+
+  <h2>8. Baja y suspensión</h2>
+  <p>Puedes eliminar tu cuenta en cualquier momento desde Ajustes. Podemos suspender o cancelar cuentas que incumplan gravemente estos Términos, informándote del motivo salvo que la ley lo impida.</p>
+
+  <h2>9. Responsabilidad</h2>
+  <p>Prestamos el servicio con diligencia, pero no podemos garantizar que esté disponible sin interrupciones ni errores. No somos responsables del contenido publicado por las personas usuarias en los términos del artículo 16 de la LSSI-CE y del artículo 6 del DSA. Nada de lo previsto en estos Términos limita los derechos que te reconoce la normativa de consumidores y usuarios.</p>
+
+  <h2>10. Cambios</h2>
+  <p>Podemos modificar estos Términos por motivos legales, técnicos o de negocio. Te avisaremos con antelación razonable de los cambios relevantes. Si no estás de acuerdo, puedes eliminar tu cuenta.</p>
+
+  <h2>11. Ley aplicable</h2>
+  <p>Estos Términos se rigen por la ley española. Si eres consumidor/a, serán competentes los juzgados de tu domicilio.</p>
+</article>
+</div></main>
+<%- include('../partials/footer') %>

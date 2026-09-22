@@ -1,0 +1,25 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main"><div class="prose-wrap">
+<%- include('../partials/legal-nav') %>
+<article class="prose">
+  <span class="kicker kicker--accent">Última actualización: <%= config.legal.lastUpdate %></span>
+  <h1 class="display">Accesibilidad</h1>
+  <p><%= config.siteName %> quiere que la pasarela sea para todo el mundo. Trabajamos para cumplir las Pautas de Accesibilidad para el Contenido Web (WCAG) 2.1, nivel AA.</p>
+  <h2>Medidas aplicadas</h2>
+  <ul>
+    <li>Navegación completa con teclado y enlace «Saltar al contenido».</li>
+    <li>Foco visible en todos los elementos interactivos.</li>
+    <li>Textos alternativos en las imágenes de los looks, generados a partir de su título y autor.</li>
+    <li>Contraste alto entre texto y fondo.</li>
+    <li>Respeto de la preferencia del sistema «reducir movimiento»: se desactivan animaciones, cursor personalizado y efectos.</li>
+    <li>Estructura semántica con encabezados, regiones y etiquetas ARIA.</li>
+    <li>Diseño adaptable a cualquier tamaño de pantalla y zoom del navegador.</li>
+  </ul>
+  <h2>Limitaciones conocidas</h2>
+  <p>Las fotografías publicadas por la comunidad pueden no incluir descripciones detalladas. Los anuncios de terceros pueden no cumplir todos los criterios.</p>
+  <h2>Contacto</h2>
+  <p>Si encuentras una barrera de accesibilidad, escríbenos a <%- legalVal('contactEmail') %> y la resolveremos lo antes posible.</p>
+</article>
+</div></main>
+<%- include('../partials/footer') %>

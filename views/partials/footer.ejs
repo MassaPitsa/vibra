@@ -1,0 +1,92 @@
+<footer class="footer" role="contentinfo">
+  <p class="footer__phrase rv">La calle <span class="serif">también</span> tiene su pasarela.</p>
+  <div class="footer__cols">
+    <div>
+      <h3>Explora</h3>
+      <a href="/">Feed</a>
+      <a href="/pasarela">Modo pasarela</a>
+      <a href="/?orden=tendencia">Tendencia</a>
+      <a href="/?orden=top">Más guardados</a>
+    </div>
+    <div>
+      <h3>Comunidad</h3>
+      <a href="/subir">Subir look</a>
+      <a href="/guardados">Guardados</a>
+      <a href="/sobre">Manifiesto</a>
+      <a href="/legal/normas">Normas de la comunidad</a>
+    </div>
+    <div>
+      <h3>Legal</h3>
+      <a href="/legal/aviso-legal">Aviso legal</a>
+      <a href="/legal/privacidad">Privacidad</a>
+      <a href="/legal/cookies">Cookies</a>
+      <a href="/legal/terminos">Términos y condiciones</a>
+    </div>
+    <div>
+      <h3>Ayuda</h3>
+      <a href="/contacto">Contacto</a>
+      <a href="/legal/accesibilidad">Accesibilidad</a>
+      <button type="button" data-cookie-open>Configurar cookies</button>
+    </div>
+  </div>
+  <div class="footer__word" aria-hidden="true"><span>V</span><span>I</span><span>B</span><span>R</span><span>A</span></div>
+  <div class="footer__legal">
+    <span>© <%= new Date().getFullYear() %> <%= config.siteName %><% if (config.legal.ownerName) { %> · <%= config.legal.ownerName %><% } %></span>
+    <span>Hecho en la calle · Street Season FW26</span>
+  </div>
+</footer>
+
+<nav class="tabbar" aria-label="Navegación inferior">
+  <a href="/" <%- path === '/' ? 'aria-current="page"' : '' %>><%- icon('home') %>Feed</a>
+  <a href="/pasarela"><%- icon('runway') %>Pasarela</a>
+  <a href="/subir" aria-label="Subir look"><span class="tabbar__plus"><%- icon('plus') %></span></a>
+  <a href="/guardados" <%- path.startsWith('/guardados') ? 'aria-current="page"' : '' %>><%- icon('bookmark') %>Guardados</a>
+  <a href="<%= user ? '/u/' + user.username : '/entrar' %>" <%- user && path === '/u/' + user.username ? 'aria-current="page"' : '' %>><%- icon('user') %><%= user ? 'Perfil' : 'Entrar' %></a>
+</nav>
+
+<!-- Banner de consentimiento (RGPD + LSSI art. 22.2). Rechazar es tan fácil como aceptar. -->
+<% if (config.adsense.client && config.adsense.cmp === 'own') { %>
+<section class="cookie <%= consent ? '' : 'is-open' %>" data-cookie role="dialog" aria-modal="false" aria-labelledby="cookie-title">
+  <h2 id="cookie-title">Cookies <span>Backstage</span></h2>
+  <p>Usamos cookies técnicas necesarias para que VIBRA funcione. Con tu permiso, Google AdSense usará cookies para mostrar publicidad que financia la web y, si lo aceptas, personalizarla. Puedes cambiar de opinión cuando quieras en «Configurar cookies». <a href="/legal/cookies">Más información</a>.</p>
+  <div class="cookie__prefs">
+    <div class="cookie__pref"><div><b>Necesarias</b><span>Sesión, seguridad y tu elección de cookies. Siempre activas.</span></div><label class="toggle"><input type="checkbox" checked disabled aria-label="Cookies necesarias (siempre activas)"></label></div>
+    <div class="cookie__pref"><div><b>Publicidad</b><span>Permite a Google almacenar cookies para servir y medir anuncios.</span></div><label class="toggle"><input type="checkbox" data-pref="ads" aria-label="Cookies de publicidad"></label></div>
+    <div class="cookie__pref"><div><b>Anuncios personalizados</b><span>Anuncios basados en tu perfil e intereses.</span></div><label class="toggle"><input type="checkbox" data-pref="personalized" aria-label="Anuncios personalizados"></label></div>
+  </div>
+  <div class="cookie__btns">
+    <button type="button" class="btn" data-cookie-reject>Rechazar</button>
+    <button type="button" class="btn" data-cookie-accept>Aceptar</button>
+    <button type="button" class="btn btn--full" data-cookie-config>Configurar</button>
+  </div>
+</section>
+<% } else { %>
+<section class="cookie" data-cookie data-no-ads role="dialog" aria-labelledby="cookie-title">
+  <h2 id="cookie-title">Cookies <span>Backstage</span></h2>
+  <p>Ahora mismo VIBRA sólo usa cookies técnicas imprescindibles (sesión y seguridad), que no requieren consentimiento. No usamos cookies de análisis ni de publicidad. <a href="/legal/cookies">Política de cookies</a>.</p>
+  <div class="cookie__btns"><button type="button" class="btn btn--full" data-cookie-close>Entendido</button></div>
+</section>
+<% } %>
+
+<% if (user) { %>
+<!-- Hoja "Guardar en colección" (tipo TikTok) -->
+<div class="modal" data-coll-modal aria-hidden="true">
+  <div class="modal__backdrop" data-close></div>
+  <div class="modal__panel" role="dialog" aria-modal="true" aria-labelledby="coll-title">
+    <div class="modal__head">
+      <h2 id="coll-title">Guardar en colección</h2>
+      <button type="button" class="icon-btn" data-close aria-label="Cerrar"><%- icon('close') %></button>
+    </div>
+    <ul class="coll-list" data-coll-list></ul>
+    <form class="inline-form" data-coll-new>
+      <input class="input input--box" name="name" maxlength="40" placeholder="Nueva colección (p. ej. «Invierno 26»)" required aria-label="Nombre de la nueva colección">
+      <button class="btn btn--accent btn--sm" type="submit">Crear</button>
+    </form>
+  </div>
+</div>
+<% } %>
+
+<div class="toasts" aria-live="polite" data-toasts></div>
+<script src="/static/js/app.js?v=1" defer nonce="<%= nonce %>"></script>
+</body>
+</html>

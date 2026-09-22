@@ -1,0 +1,35 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<main id="main">
+  <div class="prose-wrap">
+    <div>
+      <% if (look.cover) { %><img src="/media/<%= look.cover.thumb %>" alt="" style="width:100%;max-width:260px" loading="lazy"><% } %>
+      <p class="kicker" style="margin-top:12px">Look Nº <%= lookNumber(look.id) %> · @<%= look.username %></p>
+    </div>
+    <div class="prose" style="max-width:620px">
+      <span class="kicker kicker--accent">Seguridad de la comunidad</span>
+      <h1 class="display">Denunciar</h1>
+      <% if (done) { %>
+        <p><strong>Gracias. Hemos recibido tu notificación.</strong> La revisaremos lo antes posible de forma diligente y objetiva. Si dejaste un email, te informaremos de la decisión.</p>
+        <p><a class="btn btn--ghost" href="/look/<%= look.id %>">Volver al look</a></p>
+      <% } else { %>
+        <p>Usa este formulario para avisarnos de contenido que infringe las <a href="/legal/normas">Normas de la comunidad</a> o que consideras ilegal (art. 16 del Reglamento de Servicios Digitales). Si es una emergencia, contacta con las autoridades (112).</p>
+        <% if (error) { %><div class="form-error" role="alert"><%= error %></div><% } %>
+        <form method="post" action="/denunciar/<%= look.id %>">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <fieldset style="border:0;padding:0;margin:0 0 20px">
+            <legend class="label" style="margin-bottom:12px">Motivo</legend>
+            <% Object.entries(reasons).forEach(([k, v]) => { %>
+              <label class="check"><input type="radio" name="reason" value="<%= k %>" required style="border-radius:50%"> <span><%= v %></span></label>
+            <% }) %>
+          </fieldset>
+          <div class="field"><label for="details">Explica el motivo <span>máx. 2000</span></label><textarea id="details" name="details" maxlength="2000" placeholder="Qué ocurre y, si aplica, por qué es ilegal o vulnera tus derechos."></textarea></div>
+          <div class="field"><label for="contact">Tu email (opcional, para responderte)</label><input id="contact" name="contact" type="email" maxlength="254" value="<%= user ? user.email : '' %>" autocomplete="email"></div>
+          <label class="check"><input type="checkbox" name="good_faith" required> <span>Declaro de buena fe que la información de esta notificación es correcta y completa.</span></label>
+          <button class="btn btn--accent" type="submit">Enviar denuncia</button>
+        </form>
+      <% } %>
+    </div>
+  </div>
+</main>
+<%- include('partials/footer') %>

@@ -1,0 +1,53 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main"><div class="prose-wrap">
+<%- include('../partials/legal-nav') %>
+<article class="prose">
+  <span class="kicker kicker--accent">Última actualización: <%= config.legal.lastUpdate %></span>
+  <h1 class="display">Política de cookies</h1>
+  <p>Esta política explica qué cookies y tecnologías similares utiliza <%= config.siteName %>, conforme al artículo 22.2 de la LSSI-CE y a la Guía sobre el uso de las cookies de la Agencia Española de Protección de Datos.</p>
+
+  <h2>¿Qué son las cookies?</h2>
+  <p>Son pequeños archivos que un sitio web guarda en tu navegador para recordar información sobre tu visita. Algunas son imprescindibles para que la web funcione; otras sólo se instalan si tú lo consientes.</p>
+
+  <h2>Cookies que usamos</h2>
+  <h3>Técnicas o necesarias (exentas de consentimiento)</h3>
+  <table>
+    <thead><tr><th>Nombre</th><th>Titular</th><th>Finalidad</th><th>Duración</th></tr></thead>
+    <tbody>
+      <tr><td><%= config.isProd ? '__Host-vibra.sid' : 'vibra.sid' %></td><td><%= config.siteName %> (propia)</td><td>Mantener tu sesión iniciada y proteger los formularios frente a ataques CSRF. Sólo se crea si inicias sesión o usas un formulario.</td><td>30 días (se renueva con el uso)</td></tr>
+      <tr><td>vibra_consent</td><td><%= config.siteName %> (propia)</td><td>Recordar tu elección sobre las cookies.</td><td>12 meses</td></tr>
+      <tr><td>vibra:intro (sessionStorage)</td><td><%= config.siteName %> (propia)</td><td>Evitar repetir la animación de entrada en la misma sesión.</td><td>Hasta cerrar la pestaña</td></tr>
+      <% if (config.turnstile.siteKey) { %><tr><td>cf_clearance y similares</td><td>Cloudflare</td><td>Seguridad: verificar que no eres un bot al registrarte.</td><td>Sesión / hasta 1 año</td></tr><% } %>
+    </tbody>
+  </table>
+
+  <h3>Publicidad (sólo con tu consentimiento)</h3>
+  <% if (config.adsense.client) { %>
+  <table>
+    <thead><tr><th>Nombre</th><th>Titular</th><th>Finalidad</th><th>Duración</th></tr></thead>
+    <tbody>
+      <tr><td>__gads, __gpi, __eoi</td><td>Google (tercero)</td><td>Servir anuncios, limitar la frecuencia y medir su rendimiento.</td><td>Hasta 13 meses</td></tr>
+      <tr><td>IDE, DSID, test_cookie</td><td>Google / DoubleClick (tercero)</td><td>Publicidad personalizada y medición de conversiones.</td><td>Hasta 13 meses</td></tr>
+      <tr><td>FCCDCF, FCNEC</td><td>Google (tercero)</td><td>Guardar el estado de consentimiento cuando se usa la plataforma de consentimiento de Google.</td><td>Hasta 13 meses</td></tr>
+    </tbody>
+  </table>
+  <p>La lista exacta de cookies de Google puede variar. Consulta <a href="https://business.safety.google/adscookies/" target="_blank" rel="noopener">la información oficial de Google sobre cookies publicitarias</a>.</p>
+  <% } else { %>
+  <p>Actualmente <strong>no</strong> usamos cookies de publicidad ni de análisis. Si en el futuro las activamos, te pediremos tu consentimiento antes de instalarlas.</p>
+  <% } %>
+
+  <h2>Cómo gestionar o retirar tu consentimiento</h2>
+  <p>Puedes aceptar, rechazar o configurar las cookies no necesarias en el panel que aparece en tu primera visita y cambiar de opinión en cualquier momento desde el enlace <button type="button" class="link-u" data-cookie-open style="color:var(--accent)">Configurar cookies</button> del pie de página. Rechazar las cookies no te impide usar <%= config.siteName %>.</p>
+  <p>También puedes bloquear o borrar cookies desde tu navegador:
+    <a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener">Chrome</a>,
+    <a href="https://support.mozilla.org/es/kb/Borrar%20cookies" target="_blank" rel="noopener">Firefox</a>,
+    <a href="https://support.apple.com/es-es/guide/safari/sfri11471/mac" target="_blank" rel="noopener">Safari</a>,
+    <a href="https://support.microsoft.com/es-es/microsoft-edge" target="_blank" rel="noopener">Edge</a>.
+  </p>
+
+  <h2>Más información</h2>
+  <p>Consulta nuestra <a href="/legal/privacidad">Política de privacidad</a> para saber más sobre cómo tratamos tus datos y cómo ejercer tus derechos.</p>
+</article>
+</div></main>
+<%- include('../partials/footer') %>

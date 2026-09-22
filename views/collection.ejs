@@ -1,0 +1,22 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<main id="main">
+  <div class="saved-head">
+    <div>
+      <span class="kicker kicker--accent">Colección curada por <a class="link-u" href="/u/<%= c.username %>">@<%= c.username %></a></span>
+      <h1 class="display"><%= c.name %></h1>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <span class="kicker"><%= items.length %> looks</span>
+      <button type="button" class="icon-btn" data-share="/c/<%= c.id %>" data-share-title="<%= c.name %>" aria-label="Compartir colección"><%- icon('share') %></button>
+    </div>
+  </div>
+  <section class="section">
+    <% if (items.length) { %>
+      <div class="grid"><%- include('partials/cards', { items }) %></div>
+    <% } else { %>
+      <div class="empty"><p class="display">Vacía</p><p>Esta colección aún no tiene looks.</p></div>
+    <% } %>
+  </section>
+</main>
+<%- include('partials/footer') %>

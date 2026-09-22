@@ -1,0 +1,61 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<main id="main">
+  <div class="prose-wrap">
+    <nav class="prose-nav" aria-label="Secciones de ajustes">
+      <a href="#perfil">Perfil</a>
+      <a href="#seguridad">Seguridad</a>
+      <a href="#privacidad">Tus datos</a>
+      <a href="#peligro">Eliminar cuenta</a>
+    </nav>
+    <div class="prose" style="max-width:640px">
+      <span class="kicker kicker--accent">Backstage · @<%= me.username %></span>
+      <h1 class="display">Ajustes</h1>
+      <% if (error) { %><div class="form-error" role="alert"><%= error %></div><% } %>
+
+      <h2 id="perfil">Perfil</h2>
+      <form method="post" action="/ajustes/avatar" enctype="multipart/form-data" style="display:flex;gap:18px;align-items:center;margin-bottom:26px;flex-wrap:wrap">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <% if (me.avatar) { %><img class="avatar avatar--lg" src="/media/<%= me.avatar %>" alt="Tu foto de perfil" width="116" height="116"><% } else { %><span class="avatar avatar--lg"><%= me.username[0].toUpperCase() %></span><% } %>
+        <div>
+          <input type="file" name="avatar" accept="image/jpeg,image/png,image/webp,image/avif" required aria-label="Nueva foto de perfil" style="font-size:13px;max-width:100%">
+          <button class="btn btn--ghost btn--sm" type="submit" style="margin-top:10px">Cambiar foto</button>
+        </div>
+      </form>
+      <form method="post" action="/ajustes/perfil">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <div class="field"><label for="display_name">Nombre visible</label><input id="display_name" name="display_name" maxlength="40" value="<%= me.display_name %>"></div>
+        <div class="field"><label for="bio">Bio <span>máx. 280</span></label><textarea id="bio" name="bio" maxlength="280" style="min-height:80px"><%= me.bio %></textarea></div>
+        <div class="field"><label for="city">Ciudad</label><input id="city" name="city" maxlength="40" value="<%= me.city %>"></div>
+        <div class="field"><label for="instagram">Instagram</label><input id="instagram" name="instagram" maxlength="60" value="<%= me.instagram %>" placeholder="tu_usuario"></div>
+        <button class="btn btn--accent" type="submit">Guardar perfil</button>
+      </form>
+
+      <h2 id="seguridad">Seguridad</h2>
+      <p>Email de la cuenta: <strong><%= me.email %></strong></p>
+      <form method="post" action="/ajustes/password">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <div class="field"><label for="current">Contraseña actual</label><input id="current" name="current" type="password" autocomplete="current-password" required></div>
+        <div class="field"><label for="password">Nueva contraseña</label><input id="password" name="password" type="password" autocomplete="new-password" minlength="10" required><small>Mínimo 10 caracteres. Una frase larga es más segura que una contraseña rara.</small></div>
+        <div class="field"><label for="password2">Repite la nueva contraseña</label><input id="password2" name="password2" type="password" autocomplete="new-password" required></div>
+        <button class="btn btn--ghost" type="submit">Cambiar contraseña</button>
+      </form>
+
+      <h2 id="privacidad">Tus datos</h2>
+      <p>Aceptaste los Términos (versión <%= me.terms_version %>) el <%= formatDate(me.terms_accepted_at) %>. Cuenta creada el <%= formatDate(me.created_at) %>.</p>
+      <p>Puedes descargar una copia de todos tus datos en formato JSON (derecho de acceso y portabilidad, arts. 15 y 20 RGPD).</p>
+      <a class="btn btn--ghost" href="/ajustes/exportar" download>Descargar mis datos</a>
+      <p style="margin-top:18px">Para ejercer otros derechos (rectificación, oposición, limitación) consulta la <a href="/legal/privacidad">Política de privacidad</a>.</p>
+
+      <h2 id="peligro" style="color:var(--red)">Eliminar cuenta</h2>
+      <p>Se borrarán de forma <strong>definitiva</strong> tu perfil, tus looks y sus fotos, tus guardados y tus colecciones. No se puede deshacer.</p>
+      <form method="post" action="/ajustes/eliminar" data-confirm="Última oportunidad: ¿eliminar tu cuenta y todo tu contenido para siempre?">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <div class="field"><label for="confirm">Escribe tu usuario (<%= me.username %>)</label><input id="confirm" name="confirm" autocomplete="off" required></div>
+        <div class="field"><label for="delpw">Contraseña</label><input id="delpw" name="password" type="password" autocomplete="current-password" required></div>
+        <button class="btn btn--danger" type="submit">Eliminar mi cuenta</button>
+      </form>
+    </div>
+  </div>
+</main>
+<%- include('partials/footer') %>

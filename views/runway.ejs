@@ -1,0 +1,18 @@
+<%- include('partials/head') %>
+<%- include('partials/header', { bodyClass: 'runway-page' }) %>
+<div class="runway-progress" data-runway-progress style="width:0"></div>
+<div class="runway-hud">
+  <a href="/" class="logo"><%= config.siteName %><sup>Pasarela</sup></a>
+  <span class="kicker" data-runway-counter>Look 01</span>
+  <a href="/" class="icon-btn" aria-label="Salir del modo pasarela"><%- icon('close') %></a>
+</div>
+<main id="main" class="runway" data-runway data-next="<%= hasMore ? params.page + 1 : '' %>" data-query="<%= new URLSearchParams(Object.entries({ tag: params.tag, orden: params.sort }).filter(([, v]) => v)).toString() %>">
+  <h1 class="sr-only">Modo pasarela: outfits a pantalla completa</h1>
+  <% if (items.length) { %>
+    <%- include('partials/runway-items', { items }) %>
+  <% } else { %>
+    <section class="slide"><div class="empty" style="border:0"><p class="display">Sin looks todavía</p><p>La pasarela espera su primer desfile.</p><a class="btn btn--accent" href="/subir">Subir el primero</a></div></section>
+  <% } %>
+</main>
+<span class="runway-hint" aria-hidden="true">↑ ↓ para desfilar</span>
+<%- include('partials/footer') %>

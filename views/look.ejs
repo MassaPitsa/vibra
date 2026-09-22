@@ -1,0 +1,129 @@
+<%
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'SocialMediaPosting',
+    headline: look.title,
+    articleBody: look.description || undefined,
+    datePublished: new Date(look.created_at).toISOString(),
+    url: config.siteUrl + '/look/' + look.id,
+    image: look.images.map((i) => config.siteUrl + '/media/' + i.file),
+    author: { '@type': 'Person', name: look.display_name || look.username, url: config.siteUrl + '/u/' + look.username },
+    interactionStatistic: [{ '@type': 'InteractionCounter', interactionType: 'https://schema.org/BookmarkAction', userInteractionCount: look.save_count }],
+  };
+%>
+<%- include('partials/head', { jsonLd }) %>
+<%- include('partials/header') %>
+<main id="main">
+  <% if (look.status === 'removed') { %>
+    <div class="notice" style="margin: 20px var(--gutter) 0"><b>Retirado por moderación</b>Este look no es visible públicamente. Motivo: <%= look.removal_reason || 'incumplimiento de las normas de la comunidad' %>. Si no estás de acuerdo, puedes reclamar escribiendo a <a class="link-u" href="/contacto">contacto</a>.</div>
+  <% } %>
+  <article class="look">
+    <div class="gallery" data-gallery>
+      <div class="gallery__thumbs" role="tablist" aria-label="Fotos del look">
+        <% look.images.forEach((img, i) => { %>
+          <button type="button" role="tab" data-go="<%= i %>" aria-current="<%= i === 0 ? 'true' : 'false' %>" aria-label="Foto <%= i + 1 %>"><img src="/media/<%= img.thumb %>" alt="" loading="lazy"></button>
+        <% }) %>
+      </div>
+      <div class="gallery__main" style="--c: <%= look.cover ? look.cover.color : '#1c1c1c' %>">
+        <div class="gallery__slides" data-slides>
+          <% look.images.forEach((img, i) => { %>
+            <figure><img src="/media/<%= img.file %>" width="<%= img.w %>" height="<%= img.h %>" alt="<%= look.title %> — foto <%= i + 1 %> de <%= look.images.length %>" <%- i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' %> decoding="async" data-zoom data-cursor="view"></figure>
+          <% }) %>
+        </div>
+        <% if (look.images.length > 1) { %>
+          <span class="gallery__count"><span data-cur>1</span>/<%= look.images.length %></span>
+          <button type="button" class="icon-btn gallery__nav gallery__nav--prev" data-prev aria-label="Foto anterior"><%- icon('left') %></button>
+          <button type="button" class="icon-btn gallery__nav gallery__nav--next" data-next aria-label="Foto siguiente"><%- icon('right') %></button>
+          <div class="gallery__dots" aria-hidden="true"><% look.images.forEach((_, i) => { %><i class="<%= i === 0 ? 'on' : '' %>"></i><% }) %></div>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="sheet">
+      <div class="sheet__num">
+        <span class="kicker kicker--accent">Look Nº <%= lookNumber(look.id) %></span>
+        <span class="kicker"><%= formatDate(look.created_at) %></span>
+      </div>
+      <h1 class="display sheet__title"><%= look.title %></h1>
+
+      <div class="sheet__by">
+        <a href="/u/<%= look.username %>">
+          <% if (look.avatar) { %><img class="avatar" src="/media/<%= look.avatar %>" alt="" width="44" height="44" style="width:44px;height:44px"><% } else { %><span class="avatar" style="width:44px;height:44px"><%= look.username[0].toUpperCase() %></span><% } %>
+        </a>
+        <div>
+          <b><a href="/u/<%= look.username %>" class="link-u"><%= look.display_name || look.username %></a></b>
+          <span>@<%= look.username %><% if (look.city) { %> · <%- icon('pin') .replace('<svg', '<svg style="width:11px;height:11px;vertical-align:-1px"') %> <a href="/?ciudad=<%= encodeURIComponent(look.city) %>" class="link-u"><%= look.city %></a><% } %> · <%= timeAgo(look.created_at) %></span>
+        </div>
+      </div>
+
+      <% if (look.description) { %><p class="sheet__desc"><%= look.description %></p><% } %>
+
+      <% if (look.status === 'published') { %>
+      <div class="sheet__actions">
+        <button type="button" class="save-btn" data-save="<%= look.id %>" data-label aria-pressed="<%= look.saved ? 'true' : 'false' %>" aria-label="<%= look.saved ? 'Quitar de guardados' : 'Guardar look' %>">
+          <%- icon('bookmark') %><span data-save-label><%= look.saved ? 'Guardado' : 'Guardar' %></span><span class="burst" aria-hidden="true"><% for (let k = 0; k < 8; k++) { %><i style="--a: <%= k * 45 %>deg"></i><% } %></span>
+        </button>
+        <button type="button" class="btn btn--ghost" data-collect="<%= look.id %>"><%- icon('folder') %> Colección</button>
+        <button type="button" class="icon-btn" data-share="/look/<%= look.id %>" data-share-title="<%= look.title %>" aria-label="Compartir" title="Compartir"><%- icon('share') %></button>
+        <% if (!isOwner) { %><a class="icon-btn" href="/denunciar/<%= look.id %>" aria-label="Denunciar este contenido" title="Denunciar" rel="nofollow"><%- icon('flag') %></a><% } %>
+      </div>
+      <% } %>
+
+      <% if (look.pieces.length) { %>
+      <section class="credits" aria-labelledby="credits-title">
+        <h2 class="kicker" id="credits-title">Créditos del look</h2>
+        <ol>
+          <% look.pieces.forEach((p) => { %>
+            <li><span><%= p.label %></span><span class="dots"></span><span class="brand"><%= p.brand || '—' %></span></li>
+          <% }) %>
+        </ol>
+      </section>
+      <% } %>
+
+      <% if (look.tags.length) { %>
+      <div class="tags"><% look.tags.forEach((t) => { %><a class="chip" href="/?tag=<%= encodeURIComponent(t) %>#feed">#<%= t %></a><% }) %></div>
+      <% } %>
+
+      <div class="sheet__stats">
+        <span><b data-count="<%= look.id %>"><%= compact(look.save_count) %></b> guardados</span>
+        <span><b><%= compact(look.view_count) %></b> vistas</span>
+        <span><b><%= look.images.length %></b> <%= look.images.length === 1 ? 'foto' : 'fotos' %></span>
+      </div>
+
+      <% if (isOwner || (user && user.role === 'admin')) { %>
+      <div class="sheet__owner">
+        <a class="btn btn--ghost btn--sm" href="/look/<%= look.id %>/editar"><%- icon('edit') %> Editar</a>
+        <form method="post" action="/look/<%= look.id %>/eliminar" data-confirm="¿Eliminar este look para siempre? Se borrarán las fotos y desaparecerá de los guardados de todo el mundo.">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <button class="btn btn--danger btn--sm" type="submit"><%- icon('trash') %> Eliminar</button>
+        </form>
+      </div>
+      <% } %>
+    </div>
+  </article>
+
+  <% if (config.adsense.client && config.adsense.slotLook) { %>
+    <div class="ad-wide"><span class="ad-card__label">Publicidad</span>
+      <ins class="adsbygoogle" style="display:block" data-ad-client="<%= config.adsense.client %>" data-ad-slot="<%= config.adsense.slotLook %>" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    </div>
+  <% } %>
+
+  <% if (more.length) { %>
+  <section class="section">
+    <div class="section__head"><h2 class="display section__title">Más de @<%= look.username %></h2><a class="kicker kicker--accent" href="/u/<%= look.username %>">Ver perfil →</a></div>
+    <div class="grid"><%- include('partials/cards', { items: more }) %></div>
+  </section>
+  <% } %>
+  <% if (related.length) { %>
+  <section class="section">
+    <div class="section__head"><h2 class="display section__title">También <span class="serif accent">desfilan</span></h2></div>
+    <div class="grid"><%- include('partials/cards', { items: related }) %></div>
+  </section>
+  <% } %>
+</main>
+
+<div class="lightbox" data-lightbox role="dialog" aria-modal="true" aria-label="Foto ampliada">
+  <button type="button" class="icon-btn" data-lightbox-close aria-label="Cerrar"><%- icon('close') %></button>
+  <img alt="">
+</div>
+<%- include('partials/footer') %>

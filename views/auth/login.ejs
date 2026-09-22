@@ -1,0 +1,28 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main" class="auth">
+  <section class="auth__poster" data-tilt-area>
+    <span class="kicker kicker--accent">Backstage · acceso</span>
+    <p class="display">Vuelve<br>al <span class="serif accent">front</span><br>row</p>
+    <div class="pass" data-tilt aria-hidden="true">
+      <div class="pass__top"><span>Backstage</span><span>FW26</span></div>
+      <div><div class="pass__big">Access<br>granted</div><div class="pass__name">La calle también tiene su pasarela</div></div>
+      <div class="pass__bar"></div>
+      <div class="pass__strip">Member · <%= config.siteName %></div>
+    </div>
+  </section>
+  <section class="auth__form">
+    <h1 class="display">Entrar</h1>
+    <p class="muted" style="margin:0 0 28px">Tus guardados y colecciones te esperan.</p>
+    <% if (error) { %><div class="form-error" role="alert"><%= error %></div><% } %>
+    <form method="post" action="/entrar">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <input type="hidden" name="next" value="<%= next %>">
+      <div class="field"><label for="identifier">Email o usuario</label><input id="identifier" name="identifier" required maxlength="254" autocomplete="username" autocapitalize="none" spellcheck="false" value="<%= form.identifier || '' %>"></div>
+      <div class="field"><label for="password">Contraseña <a href="/olvide" class="link-u" style="text-transform:none;letter-spacing:0;font-weight:400">¿La olvidaste?</a></label><input id="password" name="password" type="password" required autocomplete="current-password"></div>
+      <button class="btn btn--accent btn--block" type="submit">Entrar <span class="arrow">→</span></button>
+    </form>
+    <p class="auth__alt">¿Sin cuenta? <a class="link-u" href="/registro<%= next !== '/' ? '?next=' + encodeURIComponent(next) : '' %>">Crea tu pase gratis</a></p>
+  </section>
+</main>
+<%- include('../partials/footer') %>

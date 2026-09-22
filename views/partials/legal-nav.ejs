@@ -1,0 +1,6 @@
+<nav class="prose-nav" aria-label="Documentos legales">
+  <% Object.entries(pages).forEach(([slug, p]) => { %>
+    <a href="/legal/<%= slug %>" <%- slug === current ? 'aria-current="page"' : '' %>><%= p.title %></a>
+  <% }) %>
+  <a href="/contacto">Contacto</a>
+</nav>

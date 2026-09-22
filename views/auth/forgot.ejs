@@ -1,0 +1,25 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main" class="auth">
+  <section class="auth__poster">
+    <span class="kicker kicker--accent">Backstage · recuperación</span>
+    <p class="display">Se nos<br>perdió<br>el <span class="serif accent">pase</span></p>
+  </section>
+  <section class="auth__form">
+    <h1 class="display">Recuperar</h1>
+    <% if (sent) { %>
+      <p>Si existe una cuenta con ese email, te hemos enviado un enlace para crear una nueva contraseña. Caduca en 1 hora. Revisa también la carpeta de spam.</p>
+      <p class="auth__alt"><a class="link-u" href="/entrar">Volver a entrar</a></p>
+    <% } else { %>
+      <p class="muted" style="margin:0 0 28px">Escribe el email de tu cuenta y te enviaremos un enlace seguro.</p>
+      <% if (error) { %><div class="form-error" role="alert"><%= error %></div><% } %>
+      <form method="post" action="/olvide">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required maxlength="254" autocomplete="email"></div>
+        <% if (config.turnstile.siteKey) { %><div class="cf-turnstile" data-sitekey="<%= config.turnstile.siteKey %>" data-theme="dark" style="margin:10px 0"></div><script nonce="<%= nonce %>" src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script><% } %>
+        <button class="btn btn--accent btn--block" type="submit">Enviar enlace</button>
+      </form>
+    <% } %>
+  </section>
+</main>
+<%- include('../partials/footer') %>

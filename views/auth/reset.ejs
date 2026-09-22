@@ -1,0 +1,24 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main" class="auth">
+  <section class="auth__poster">
+    <span class="kicker kicker--accent">Backstage · nuevo pase</span>
+    <p class="display">Nueva<br><span class="serif accent">llave</span></p>
+  </section>
+  <section class="auth__form">
+    <h1 class="display">Nueva contraseña</h1>
+    <% if (!valid) { %>
+      <p>Este enlace no es válido o ha caducado. Pide uno nuevo.</p>
+      <p class="auth__alt"><a class="btn btn--accent" href="/olvide">Pedir otro enlace</a></p>
+    <% } else { %>
+      <% if (error) { %><div class="form-error" role="alert"><%= error %></div><% } %>
+      <form method="post" action="/restablecer/<%= token %>">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <div class="field"><label for="password">Nueva contraseña</label><input id="password" name="password" type="password" required minlength="10" autocomplete="new-password"><small>Mínimo 10 caracteres.</small></div>
+        <div class="field"><label for="password2">Repítela</label><input id="password2" name="password2" type="password" required autocomplete="new-password"></div>
+        <button class="btn btn--accent btn--block" type="submit">Guardar y entrar</button>
+      </form>
+    <% } %>
+  </section>
+</main>
+<%- include('../partials/footer') %>

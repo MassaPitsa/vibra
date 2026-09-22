@@ -1,0 +1,50 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<main id="main" class="section">
+  <span class="kicker kicker--accent">Sólo administración</span>
+  <h1 class="display section__title" style="margin-bottom:24px">Moderación</h1>
+  <div class="admin-stats">
+    <div class="stat"><b><%= stats.users %></b><span>Usuarios (+<%= stats.users7 %> 7d)</span></div>
+    <div class="stat"><b><%= stats.looks %></b><span>Looks (+<%= stats.looks7 %> 7d)</span></div>
+    <div class="stat"><b><%= stats.saves %></b><span>Guardados</span></div>
+    <div class="stat"><b class="<%= stats.open ? 'acid' : '' %>"><%= stats.open %></b><span>Denuncias abiertas</span></div>
+  </div>
+
+  <h2 class="kicker" style="margin:30px 0 10px">Denuncias pendientes</h2>
+  <% if (!reports.length) { %><p class="muted">Todo limpio. ✦</p><% } else { %>
+  <table class="admin-table">
+    <thead><tr><th>Look</th><th>Motivo</th><th>Detalles</th><th>Acciones</th></tr></thead>
+    <tbody>
+    <% reports.forEach((r) => { %>
+      <tr>
+        <td><a href="/look/<%= r.post_id %>" target="_blank"><% if (r.thumb) { %><img src="/media/<%= r.thumb %>" alt=""><% } %></a><div class="mono" style="font-size:11px;margin-top:6px">Nº <%= lookNumber(r.post_id) %> · @<%= r.author %><br><%= r.same %> denuncia(s)</div></td>
+        <td><strong><%= reasons[r.reason] || r.reason %></strong><div class="muted mono" style="font-size:11px"><%= timeAgo(r.created_at) %></div></td>
+        <td style="max-width:360px;white-space:pre-line"><%= r.details || '—' %><% if (r.contact) { %><div class="muted mono" style="font-size:11px;margin-top:6px">Contacto: <%= r.contact %></div><% } %></td>
+        <td>
+          <form method="post" action="/admin/looks/<%= r.post_id %>/remove" style="margin-bottom:8px">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <input class="input input--box" name="reason" required minlength="5" maxlength="500" placeholder="Motivo (lo verá el autor)" style="font-size:13px;margin-bottom:6px">
+            <button class="btn btn--danger btn--sm" type="submit">Retirar look</button>
+          </form>
+          <form method="post" action="/admin/reports/<%= r.id %>/dismiss" style="display:inline"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn btn--ghost btn--sm" type="submit">Descartar</button></form>
+          <form method="post" action="/admin/users/<%= r.author_id %>/suspend" style="display:inline" data-confirm="¿Suspender a @<%= r.author %>? Se retirarán todos sus looks."><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn btn--ghost btn--sm" type="submit">Suspender usuario</button></form>
+        </td>
+      </tr>
+    <% }) %>
+    </tbody>
+  </table>
+  <% } %>
+
+  <h2 class="kicker" style="margin:40px 0 10px">Retirados recientemente</h2>
+  <% if (!removed.length) { %><p class="muted">Ninguno.</p><% } else { %>
+  <table class="admin-table">
+    <tbody>
+    <% removed.forEach((p) => { %>
+      <tr><td><a class="link-u" href="/look/<%= p.id %>">Nº <%= lookNumber(p.id) %> · <%= p.title %></a> <span class="muted">@<%= p.username %></span></td><td class="muted"><%= p.removal_reason %></td>
+      <td><form method="post" action="/admin/looks/<%= p.id %>/restore"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn btn--ghost btn--sm" type="submit">Restaurar</button></form></td></tr>
+    <% }) %>
+    </tbody>
+  </table>
+  <% } %>
+</main>
+<%- include('partials/footer') %>

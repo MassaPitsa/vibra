@@ -1,0 +1,54 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<main id="main">
+  <header class="profile-head">
+    <div class="profile-head__bg" aria-hidden="true" data-marquee-x>@<%= profile.username %> @<%= profile.username %></div>
+    <div class="profile-head__row">
+      <% if (profile.avatar) { %><img class="avatar avatar--lg" src="/media/<%= profile.avatar %>" alt="Foto de perfil de @<%= profile.username %>" width="116" height="116"><% } else { %><span class="avatar avatar--lg"><%= profile.username[0].toUpperCase() %></span><% } %>
+      <div style="flex:1;min-width:240px">
+        <span class="kicker kicker--accent">Modelo desde <%= new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(profile.created_at) %><% if (profile.city) { %> · <%= profile.city %><% } %></span>
+        <h1 class="display"><%= profile.display_name || profile.username %></h1>
+        <span class="mono muted">@<%= profile.username %></span>
+        <% if (profile.bio) { %><p class="profile-head__bio"><%= profile.bio %></p><% } %>
+        <% if (profile.instagram) { %><p style="margin:10px 0 0"><a class="link-u mono" style="font-size:13px" href="https://instagram.com/<%= encodeURIComponent(profile.instagram) %>" target="_blank" rel="noopener nofollow ugc">Instagram · @<%= profile.instagram %> ↗</a></p><% } %>
+      </div>
+      <% if (isMe) { %>
+        <div style="display:flex;gap:10px"><a class="btn btn--ghost btn--sm" href="/ajustes">Editar perfil</a><a class="btn btn--accent btn--sm" href="/subir">+ Nuevo look</a></div>
+      <% } %>
+    </div>
+    <div class="profile-stats">
+      <div class="stat"><b><%= compact(stats.looks) %></b><span>Looks</span></div>
+      <div class="stat"><b><%= compact(stats.saves) %></b><span>Veces guardado</span></div>
+      <div class="stat"><b><%= compact(stats.views) %></b><span>Vistas</span></div>
+    </div>
+  </header>
+
+  <% if (collections.length) { %>
+  <section class="section" style="padding-bottom:0">
+    <div class="section__head" style="margin-bottom:0"><h2 class="kicker">Colecciones públicas</h2></div>
+  </section>
+  <nav class="tickets" aria-label="Colecciones públicas de @<%= profile.username %>">
+    <% collections.forEach((c, i) => { const cv = c.covers.slice(0, 4); %>
+      <a class="ticket" href="/c/<%= c.id %>">
+        <div class="ticket__cover <%= cv.length === 1 ? 'one' : '' %>"><% cv.forEach((t) => { %><img src="/media/<%= t %>" alt="" loading="lazy"><% }) %></div>
+        <div class="ticket__body"><p class="ticket__name"><%= c.name %></p><span class="muted mono" style="font-size:11px"><%= c.count %> looks</span></div>
+        <div class="ticket__stub"><span>Admit one</span><span>Nº <%= lookNumber(i + 1) %></span></div>
+      </a>
+    <% }) %>
+  </nav>
+  <% } %>
+
+  <section class="section">
+    <div class="section__head"><h2 class="display section__title">El show<sup><%= looks.length %></sup></h2></div>
+    <% if (looks.length) { %>
+      <div class="grid"><%- include('partials/cards', { items: looks }) %></div>
+    <% } else { %>
+      <div class="empty">
+        <p class="display"><%= isMe ? 'Tu debut' : 'Sin looks' %></p>
+        <p><%= isMe ? 'Aún no has subido ningún outfit. La pasarela te espera.' : 'Este perfil todavía no ha desfilado.' %></p>
+        <% if (isMe) { %><a class="btn btn--accent" href="/subir">Subir mi primer look</a><% } %>
+      </div>
+    <% } %>
+  </section>
+</main>
+<%- include('partials/footer') %>

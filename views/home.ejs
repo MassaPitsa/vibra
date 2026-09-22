@@ -1,0 +1,120 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<span class="rail rail--l" aria-hidden="true">Street Season — FW26 — Show Nº 01</span>
+<span class="rail rail--r" aria-hidden="true">La calle también tiene su pasarela</span>
+<main id="main">
+<% if (!filtered && params.page === 1) { %>
+  <section class="hero" data-hero>
+    <span class="crop crop--tl"></span><span class="crop crop--tr"></span><span class="crop crop--bl"></span><span class="crop crop--br"></span>
+    <div class="hero__meta">
+      <span class="kicker kicker--accent">Show Nº 01 — Street Season FW26</span>
+      <span class="kicker">Front row: abierto a todo el mundo</span>
+    </div>
+    <div class="hero__grid">
+      <div>
+        <h1 class="display hero__title">
+          <span class="line"><span>La calle</span></span>
+          <span class="line"><span class="serif">también</span></span>
+          <span class="line"><span>tiene su pasarela</span></span>
+        </h1>
+        <p class="hero__lede rv">Sube tu outfit, desfila frente a la comunidad y guarda los looks que te vuelan la cabeza en tus propias colecciones. <em>Aquí no hay invitación: el asfalto es el front row.</em></p>
+        <div class="hero__ctas rv">
+          <a href="/subir" class="btn btn--accent magnetic">Subir mi look <span class="arrow">→</span></a>
+          <a href="/pasarela" class="btn btn--ghost magnetic">Entrar en la pasarela</a>
+        </div>
+        <div class="hero__stats rv">
+          <div class="stat"><b data-count-up="<%= stats.looks %>">0</b><span>Looks</span></div>
+          <div class="stat"><b data-count-up="<%= stats.users %>">0</b><span>Modelos</span></div>
+          <div class="stat"><b data-count-up="<%= stats.saves %>">0</b><span>Guardados</span></div>
+        </div>
+      </div>
+      <div class="hero__stack" data-parallax>
+        <% const heroLooks = items.filter((l) => l.cover).slice(0, 3); %>
+        <% if (heroLooks.length) { %>
+          <% heroLooks.forEach((l) => { %>
+            <a class="hero__card" href="/look/<%= l.id %>" data-cursor="view">
+              <img src="/media/<%= l.cover.thumb %>" alt="<%= l.title %>" width="<%= Math.min(l.cover.w, 720) %>" height="<%= Math.round(Math.min(l.cover.w, 720) * l.cover.h / l.cover.w) %>" fetchpriority="high">
+              <figcaption>Look Nº <%= lookNumber(l.id) %> · @<%= l.username %></figcaption>
+            </a>
+          <% }) %>
+        <% } else { %>
+          <div class="hero__placeholder"><p class="display">Tu look<br><span class="serif accent">aquí</span></p></div>
+        <% } %>
+        <div class="stamp" aria-hidden="true">
+          <svg viewBox="0 0 124 124"><defs><path id="circ" d="M62,62 m-48,0 a48,48 0 1,1 96,0 a48,48 0 1,1 -96,0"/></defs><text><textPath href="#circ">La calle también tiene su pasarela ✦ </textPath></text></svg>
+          <b>FW26</b>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <% if (items.length >= 6) { %>
+  <section class="runway-strip" aria-label="Últimos looks">
+    <div class="runway-strip__head"><span class="kicker">The runway — en directo</span><a href="/pasarela" class="kicker kicker--accent">Modo pasarela →</a></div>
+    <div class="runway-strip__track">
+      <% for (let k = 0; k < 2; k++) { items.slice(0, 12).forEach((l) => { if (!l.cover) return; %>
+        <a class="runway-strip__item" href="/look/<%= l.id %>" <%- k ? 'aria-hidden="true" tabindex="-1"' : '' %>>
+          <img src="/media/<%= l.cover.thumb %>" alt="<%= k ? '' : l.title %>" loading="lazy">
+          <span>Nº <%= lookNumber(l.id) %></span>
+        </a>
+      <% }) } %>
+    </div>
+  </section>
+  <% } %>
+<% } %>
+
+  <div class="filters" id="feed">
+    <form class="search" role="search" action="/" method="get">
+      <%- icon('search') %>
+      <label class="sr-only" for="q">Buscar looks</label>
+      <input id="q" name="q" type="search" value="<%= params.q %>" placeholder="Buscar looks, marcas, ciudades…" maxlength="60" autocomplete="off">
+      <% if (params.tag) { %><input type="hidden" name="tag" value="<%= params.tag %>"><% } %>
+    </form>
+    <nav class="seg" aria-label="Ordenar">
+      <% const qs = (o) => '?' + new URLSearchParams(Object.entries({ orden: o, tag: params.tag, q: params.q, ciudad: params.city }).filter(([, v]) => v && v !== 'recientes')).toString() + '#feed'; %>
+      <a href="<%= qs('recientes') %>" class="<%= params.sort === 'recientes' ? 'is-active' : '' %>">Nuevo</a>
+      <a href="<%= qs('tendencia') %>" class="<%= params.sort === 'tendencia' ? 'is-active' : '' %>">Tendencia</a>
+      <a href="<%= qs('top') %>" class="<%= params.sort === 'top' ? 'is-active' : '' %>">Top</a>
+    </nav>
+    <div class="chips" aria-label="Estilos">
+      <a class="chip <%= !params.tag && !params.city ? 'is-active' : '' %>" href="/#feed">Todo</a>
+      <% const baseTags = ['baggy', 'gorpcore', 'y2k', 'techwear', 'skate', 'vintage', 'minimal', 'oversize', 'archive', 'workwear']; %>
+      <% [...new Set([...tags, ...baseTags])].slice(0, 16).forEach((t) => { %>
+        <a class="chip <%= params.tag === t ? 'is-active' : '' %>" href="/?tag=<%= encodeURIComponent(t) %>#feed">#<%= t %></a>
+      <% }) %>
+      <% cities.slice(0, 6).forEach((c) => { %>
+        <a class="chip <%= params.city.toLowerCase() === c.toLowerCase() ? 'is-active' : '' %>" href="/?ciudad=<%= encodeURIComponent(c) %>#feed">📍 <%= c %></a>
+      <% }) %>
+    </div>
+  </div>
+
+  <section class="section" aria-labelledby="feed-title">
+    <div class="section__head">
+      <h2 class="display section__title" id="feed-title">
+        <% if (params.tag) { %>#<%= params.tag %><% } else if (params.q) { %>“<%= params.q %>”<% } else if (params.city) { %><%= params.city %><% } else if (params.sort === 'top') { %>Los más guardados<% } else if (params.sort === 'tendencia') { %>En tendencia<% } else { %>Recién salidos<% } %><sup><%= items.length %><%= hasMore ? '+' : '' %></sup>
+      </h2>
+      <span class="kicker">Actualizado <span data-clock-short>ahora</span></span>
+    </div>
+
+    <% if (items.length) { %>
+      <div class="grid" data-grid data-next="<%= hasMore ? params.page + 1 : '' %>" data-query="<%= new URLSearchParams(Object.entries({ tag: params.tag, q: params.q, orden: params.sort, ciudad: params.city }).filter(([, v]) => v)).toString() %>">
+        <%- include('partials/cards', { items, adEvery: 12, startIndex: (params.page - 1) * 24 }) %>
+      </div>
+      <div class="loader" data-loader hidden><i></i><i></i><i></i></div>
+      <noscript><% if (hasMore) { %><p style="text-align:center"><a class="btn btn--ghost" href="?<%= new URLSearchParams({ ...Object.fromEntries(Object.entries({ tag: params.tag, q: params.q, orden: params.sort, ciudad: params.city }).filter(([, v]) => v)), page: params.page + 1 }) %>">Más looks</a></p><% } %></noscript>
+    <% } else { %>
+      <div class="empty">
+        <p class="display"><%= filtered ? 'Nada por aquí' : 'La pasarela está vacía' %></p>
+        <p><%= filtered ? 'Prueba con otro estilo o busca otra cosa. O mejor: sé quien marca esta tendencia.' : 'Sé la primera persona en desfilar. Sube tu outfit y abre el show.' %></p>
+        <a class="btn btn--accent" href="/subir">Abrir el desfile <span class="arrow">→</span></a>
+      </div>
+    <% } %>
+  </section>
+
+<% if (!filtered && params.page === 1) { %>
+  <section class="manifesto-band" data-words>
+    <p>No necesitas invitación. <span class="serif">El asfalto</span> es el front row y tu barrio, la semana de la moda.</p>
+  </section>
+<% } %>
+</main>
+<%- include('partials/footer') %>

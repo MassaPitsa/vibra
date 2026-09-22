@@ -1,0 +1,21 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<% const mail = config.legal.contactEmail; %>
+<main id="main">
+  <div class="prose-wrap">
+    <div><span class="kicker kicker--accent">Hablemos</span></div>
+    <div class="prose">
+      <h1 class="display">Contacto</h1>
+      <p>¿Dudas, colaboraciones, prensa o un problema con tu cuenta? Escríbenos y te responderemos lo antes posible.</p>
+      <h2>Email</h2>
+      <p><% if (mail) { %><a href="mailto:<%= mail %>"><%= mail %></a><% } else { %><span class="todo">[Configura LEGAL_CONTACT_EMAIL]</span><% } %></p>
+      <h2>Punto único de contacto (DSA)</h2>
+      <p>Punto de contacto para autoridades de los Estados miembros, la Comisión Europea y usuarios, conforme a los arts. 11 y 12 del Reglamento (UE) 2022/2065 de Servicios Digitales: el email anterior. Idiomas: español e inglés.</p>
+      <h2>Denunciar contenido</h2>
+      <p>Cada look tiene un botón de bandera para denunciarlo. También puedes escribirnos indicando la URL exacta del contenido y el motivo.</p>
+      <h2>Protección de datos</h2>
+      <p>Para ejercer tus derechos de acceso, rectificación, supresión, oposición, limitación o portabilidad, escríbenos desde el email de tu cuenta. Más info en la <a href="/legal/privacidad">Política de privacidad</a>. Desde <a href="/ajustes">Ajustes</a> puedes descargar tus datos o eliminar tu cuenta al instante.</p>
+    </div>
+  </div>
+</main>
+<%- include('partials/footer') %>

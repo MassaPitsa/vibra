@@ -1,0 +1,35 @@
+<%
+  const c = look.cover;
+  const alt = look.images[1];
+  const removable = typeof removeFrom !== 'undefined' && removeFrom;
+%>
+<article class="card reveal <%= look.status === 'removed' ? 'card--removed' : '' %>" data-look="<%= look.id %>" style="--delay: <%= ((i || 0) % 4) * 0.08 %>s">
+  <div class="card__media" style="--c: <%= c ? c.color : '#1c1c1c' %>" data-cursor="view">
+    <% if (c) { %>
+      <img src="/media/<%= c.thumb %>" width="<%= Math.min(c.w, 720) %>" height="<%= Math.round(Math.min(c.w, 720) * c.h / c.w) %>" alt="<%= look.title %> — outfit de @<%= look.username %>" loading="<%= (i || 0) < 4 ? 'eager' : 'lazy' %>" decoding="async">
+      <% if (alt) { %><img class="alt" src="/media/<%= alt.thumb %>" alt="" loading="lazy" decoding="async"><% } %>
+    <% } %>
+    <span class="card__num">Look Nº <%= lookNumber(look.id) %></span>
+    <% if (look.images.length > 1) { %><span class="card__multi"><%= look.images.length %> fotos</span><% } %>
+    <% if (look.save_count > 0) { %><span class="card__count"><%- icon('bookmark') %><%= compact(look.save_count) %></span><% } %>
+    <% if (look.status === 'removed') { %><span class="card__flag">Retirado por moderación</span><% } %>
+  </div>
+  <a class="card__link" href="/look/<%= look.id %>" aria-label="Ver look: <%= look.title %>"></a>
+  <% if (removable) { %>
+    <button type="button" class="card__remove" data-remove-from="<%= removeFrom %>" data-post="<%= look.id %>" aria-label="Quitar de esta colección" title="Quitar de la colección">×</button>
+  <% } %>
+  <% if (look.status === 'published') { %>
+  <button type="button" class="save-btn" data-save="<%= look.id %>" aria-pressed="<%= look.saved ? 'true' : 'false' %>" aria-label="<%= look.saved ? 'Quitar de guardados' : 'Guardar look' %>">
+    <%- icon('bookmark') %><span class="burst" aria-hidden="true"><% for (let k = 0; k < 8; k++) { %><i style="--a: <%= k * 45 %>deg"></i><% } %></span>
+  </button>
+  <% } %>
+  <div class="card__body">
+    <div>
+      <h3 class="card__title"><%= look.title %></h3>
+      <div class="card__by">
+        <a href="/u/<%= look.username %>" style="position:relative;z-index:2">@<%= look.username %></a>
+        <% if (look.city) { %><span>· <%= look.city %></span><% } %>
+      </div>
+    </div>
+  </div>
+</article>

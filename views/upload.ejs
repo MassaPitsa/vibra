@@ -1,0 +1,81 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<%
+  const pieces = (form.pieces && form.pieces.length) ? form.pieces : [{ label: '', brand: '' }, { label: '', brand: '' }, { label: '', brand: '' }];
+  const tagStr = Array.isArray(form.tags) ? form.tags.join(', ') : (form.tags || '');
+%>
+<main id="main">
+  <div class="saved-head">
+    <div>
+      <span class="kicker kicker--accent"><%= edit ? 'Look Nº ' + lookNumber(edit.id) + ' · edición' : 'Backstage · nuevo look' %></span>
+      <h1 class="display"><%= edit ? 'Retoca tu' : 'Sal a la' %> <span class="serif accent"><%= edit ? 'look' : 'pasarela' %></span></h1>
+    </div>
+    <p class="muted" style="max-width:380px;margin:0">Fotos de cuerpo entero, buena luz y actitud. La primera foto será la portada: arrastra para cambiar el orden.</p>
+  </div>
+
+  <form class="upload" method="post" action="<%= edit ? '/look/' + edit.id + '/editar' : '/subir' %>" <%- edit ? '' : 'enctype="multipart/form-data" data-upload' %> novalidate>
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+
+    <div>
+      <% if (!edit) { %>
+      <div class="drop" data-drop>
+        <input type="file" name="photos" accept="image/jpeg,image/png,image/webp,image/avif" multiple aria-label="Seleccionar fotos del outfit" data-file>
+        <div class="drop__empty">
+          <p class="display">Arrastra<br>tus <span class="serif accent">fotos</span></p>
+          <p class="muted">o haz clic para elegirlas · hasta <%= config.limits.maxImages %> · JPG, PNG, WEBP · máx. <%= config.limits.maxImageBytes / 1024 / 1024 %> MB</p>
+          <p class="kicker" style="margin-top:18px">Borramos automáticamente los datos de ubicación (GPS) de tus fotos</p>
+        </div>
+        <div class="previews" data-previews></div>
+      </div>
+      <% } else { %>
+        <div class="previews" style="display:grid">
+          <% edit.images.forEach((img, i) => { %><div class="preview" style="cursor:default"><img src="/media/<%= img.thumb %>" alt=""><% if (i === 0) { %><span class="tag">Portada</span><% } %></div><% }) %>
+        </div>
+        <p class="muted" style="font-size:13px;margin-top:12px">Las fotos no se pueden cambiar. Si quieres otras, elimina el look y súbelo de nuevo.</p>
+      <% } %>
+    </div>
+
+    <div>
+      <% if (error) { %><div class="form-error" role="alert"><%= error %></div><% } %>
+      <div class="field">
+        <label for="title">Título del look <span data-counter-for="title">0/80</span></label>
+        <input id="title" name="title" maxlength="80" required value="<%= form.title || '' %>" placeholder="Ej. Invierno en Lavapiés" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="description">Descripción <span data-counter-for="description">0/1500</span></label>
+        <textarea id="description" name="description" maxlength="1500" placeholder="Cuenta la historia del outfit: la idea, el mood, dónde lo llevaste…"><%= form.description || '' %></textarea>
+      </div>
+      <div class="field">
+        <label for="city">Ciudad</label>
+        <input id="city" name="city" maxlength="40" value="<%= form.city || '' %>" placeholder="Madrid, Barcelona, CDMX…" autocomplete="address-level2">
+      </div>
+      <div class="field">
+        <label for="tags">Estilos / tags <span>máx. 8</span></label>
+        <input id="tags" name="tags" maxlength="200" value="<%= tagStr %>" placeholder="baggy, y2k, vintage" autocomplete="off" data-tags>
+        <div class="tag-preview" data-tag-preview aria-hidden="true"></div>
+      </div>
+
+      <fieldset class="field" style="border:0;padding:0;margin:0 0 20px">
+        <legend class="label" style="margin-bottom:10px">Créditos · qué llevas</legend>
+        <div data-pieces>
+          <% pieces.forEach((p) => { %>
+          <div class="pieces-row">
+            <input name="piece_label" maxlength="40" value="<%= p.label %>" placeholder="Prenda (ej. Chaqueta)" aria-label="Prenda">
+            <input name="piece_brand" maxlength="40" value="<%= p.brand %>" placeholder="Marca (ej. Carhartt WIP)" aria-label="Marca">
+            <button type="button" class="icon-btn" style="width:32px;height:32px" data-piece-remove aria-label="Quitar pieza">×</button>
+          </div>
+          <% }) %>
+        </div>
+        <button type="button" class="btn btn--ghost btn--sm" data-piece-add style="margin-top:6px">+ Añadir pieza</button>
+      </fieldset>
+
+      <% if (!edit) { %>
+      <label class="check"><input type="checkbox" name="rights" required> <span>Confirmo que las fotos son mías (o tengo permiso) y que <strong>las personas que aparecen han consentido</strong> su publicación. Cumple las <a href="/legal/normas" target="_blank">normas de la comunidad</a>.</span></label>
+      <% } %>
+      <button class="btn btn--accent btn--block magnetic" type="submit" data-submit style="margin-top:10px"><%= edit ? 'Guardar cambios' : 'Publicar en la pasarela' %> <span class="arrow">→</span></button>
+      <div class="progress" aria-hidden="true"><i data-progress></i></div>
+      <% if (edit) { %><p style="margin-top:14px"><a class="link-u muted" href="/look/<%= edit.id %>">Cancelar</a></p><% } %>
+    </div>
+  </form>
+</main>
+<%- include('partials/footer') %>

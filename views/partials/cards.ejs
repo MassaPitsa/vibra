@@ -1,0 +1,13 @@
+<%
+  const every = typeof adEvery !== 'undefined' ? adEvery : 0;
+  const start = typeof startIndex !== 'undefined' ? startIndex : 0;
+  const showAds = every && config.adsense.client && config.adsense.slotFeed;
+%>
+<% items.forEach((look, idx) => { %>
+  <%- include('card', { look, i: idx, removeFrom: typeof removeFrom !== 'undefined' ? removeFrom : null }) %>
+  <% if (showAds && (start + idx + 1) % every === 0) { %>
+    <div class="ad-card"><span class="ad-card__label">Publicidad</span>
+      <ins class="adsbygoogle" style="display:block" data-ad-client="<%= config.adsense.client %>" data-ad-slot="<%= config.adsense.slotFeed %>" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    </div>
+  <% } %>
+<% }) %>

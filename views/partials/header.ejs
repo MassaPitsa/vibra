@@ -1,0 +1,51 @@
+<body class="<%= typeof bodyClass !== 'undefined' ? bodyClass : '' %>">
+<a class="skip-link" href="#main">Saltar al contenido</a>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor" aria-hidden="true"><span>Ver</span></div>
+
+<div class="intro" aria-hidden="true">
+  <div class="intro__word"><span>V</span><span>I</span><span>B</span><span>R</span><span>A</span></div>
+  <div class="intro__meta"><span>Street Season FW26</span><span class="intro__count">000</span><span>La calle también tiene su pasarela</span></div>
+</div>
+
+<div class="ticker" role="marquee" aria-label="La calle también tiene su pasarela">
+  <div class="ticker__track" aria-hidden="true">
+    <% for (let i = 0; i < 2; i++) { %>
+      <span>La calle también tiene su pasarela</span><span>Street Season FW26</span><span>Sube tu look</span><span>Guarda · Colecciona · Desfila</span><span>Front row para todo el mundo</span><span>Hecho en la calle</span>
+    <% } %>
+  </div>
+</div>
+
+<header class="header" data-header>
+  <nav class="header__left" aria-label="Principal">
+    <a href="/" class="logo" aria-label="<%= config.siteName %> — inicio"><%= config.siteName %><sup>FW26</sup></a>
+    <a href="/" class="nav-link" <%- path === '/' ? 'aria-current="page"' : '' %>>Feed</a>
+    <a href="/pasarela" class="nav-link">Pasarela</a>
+    <a href="/sobre" class="nav-link" <%- path === '/sobre' ? 'aria-current="page"' : '' %>>Manifiesto</a>
+  </nav>
+  <div class="header__center"><span class="live" data-clock>Madrid · en directo</span></div>
+  <div class="header__right">
+    <% if (user) { %>
+      <a href="/guardados" class="nav-link" <%- path.startsWith('/guardados') ? 'aria-current="page"' : '' %>>Guardados</a>
+      <a href="/subir" class="btn-plus magnetic" aria-label="Subir un look" title="Subir look">+</a>
+      <div class="menu" data-menu>
+        <button type="button" aria-haspopup="true" aria-expanded="false" aria-label="Menú de cuenta" data-menu-btn>
+          <% if (user.avatar) { %><img class="avatar" src="/media/<%= user.avatar %>" alt="" width="34" height="34"><% } else { %><span class="avatar"><%= user.username[0].toUpperCase() %></span><% } %>
+        </button>
+        <div class="menu__panel" role="menu">
+          <a href="/u/<%= user.username %>" role="menuitem">Mi perfil · @<%= user.username %></a>
+          <a href="/guardados" role="menuitem">Guardados y colecciones</a>
+          <a href="/subir" role="menuitem">Subir look</a>
+          <a href="/ajustes" role="menuitem">Ajustes y privacidad</a>
+          <% if (user.role === 'admin') { %><a href="/admin" role="menuitem">Moderación</a><% } %>
+          <hr>
+          <form method="post" action="/salir"><input type="hidden" name="_csrf" value="<%= csrf %>"><button type="submit" role="menuitem">Cerrar sesión</button></form>
+        </div>
+      </div>
+    <% } else { %>
+      <a href="/entrar" class="nav-link">Entrar</a>
+      <a href="/registro" class="btn btn--accent btn--sm magnetic">Únete <span class="arrow">→</span></a>
+    <% } %>
+  </div>
+</header>
+<% if (flash) { %><div class="flash <%= flash.type === 'err' ? 'flash--err' : '' %>" role="status"><%= flash.msg %></div><% } %>

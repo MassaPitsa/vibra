@@ -1,0 +1,45 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main id="main"><div class="prose-wrap">
+<%- include('../partials/legal-nav') %>
+<article class="prose">
+  <span class="kicker kicker--accent">Última actualización: <%= config.legal.lastUpdate %></span>
+  <h1 class="display">Aviso legal</h1>
+
+  <h2>1. Datos identificativos</h2>
+  <p>En cumplimiento del artículo 10 de la Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la Información y de Comercio Electrónico (LSSI-CE), se informa de los datos del titular de este sitio web:</p>
+  <ul>
+    <li><strong>Titular:</strong> <%- legalVal('ownerName') %></li>
+    <li><strong>NIF / CIF:</strong> <%- legalVal('ownerId') %></li>
+    <li><strong>Domicilio:</strong> <%- legalVal('ownerAddress') %></li>
+    <li><strong>Email de contacto:</strong> <%- legalVal('contactEmail') %></li>
+    <% if (config.legal.registry) { %><li><strong>Datos registrales:</strong> <%= config.legal.registry %></li><% } %>
+    <li><strong>Sitio web:</strong> <%= config.siteUrl %> (en adelante, «<%= config.siteName %>» o «la Plataforma»)</li>
+  </ul>
+
+  <h2>2. Objeto</h2>
+  <p><%= config.siteName %> es una comunidad online en la que las personas usuarias publican fotografías de sus outfits (en adelante, «looks»), descubren looks de otras personas y los guardan y organizan en colecciones. El acceso es gratuito y se financia mediante publicidad.</p>
+  <p>El uso de la Plataforma atribuye la condición de usuario e implica la aceptación de este Aviso legal, de los <a href="/legal/terminos">Términos y condiciones</a>, de las <a href="/legal/normas">Normas de la comunidad</a>, de la <a href="/legal/privacidad">Política de privacidad</a> y de la <a href="/legal/cookies">Política de cookies</a>.</p>
+
+  <h2>3. Condiciones de uso</h2>
+  <p>La persona usuaria se compromete a hacer un uso adecuado y lícito de la Plataforma y de sus contenidos, de conformidad con la legislación aplicable, la moral, el orden público y las presentes condiciones. Queda prohibido, entre otros: introducir virus o código malicioso; intentar acceder a áreas restringidas o a cuentas ajenas; realizar extracción masiva automatizada de contenidos (scraping) sin autorización; y publicar contenidos ilícitos o que vulneren derechos de terceros.</p>
+
+  <h2>4. Propiedad intelectual e industrial</h2>
+  <p>El diseño, código fuente, logotipos, marcas, textos y demás elementos propios de <%= config.siteName %> son titularidad del titular o de sus licenciantes y están protegidos por la normativa de propiedad intelectual e industrial. Queda prohibida su reproducción, distribución o transformación sin autorización expresa.</p>
+  <p>Los contenidos publicados por las personas usuarias (fotografías, textos) pertenecen a sus autores, que conceden a la Plataforma la licencia descrita en los <a href="/legal/terminos">Términos y condiciones</a>. Las marcas de terceros que puedan aparecer (por ejemplo, en los créditos de un look) pertenecen a sus respectivos titulares y se citan con fines meramente descriptivos.</p>
+
+  <h2>5. Responsabilidad por contenidos de terceros</h2>
+  <p><%= config.siteName %> actúa como prestador de servicios de alojamiento de datos. Conforme al artículo 16 de la LSSI-CE y al artículo 6 del Reglamento (UE) 2022/2065 de Servicios Digitales, no es responsable de la información almacenada a petición de las personas usuarias siempre que no tenga conocimiento efectivo de su ilicitud o, si lo tiene, actúe con diligencia para retirarla o impedir el acceso a ella.</p>
+  <p>Cualquier persona puede notificar contenidos presuntamente ilícitos mediante el botón «Denunciar» presente en cada look o escribiendo a <%- legalVal('contactEmail') %>.</p>
+
+  <h2>6. Enlaces</h2>
+  <p>La Plataforma puede contener enlaces a sitios de terceros (por ejemplo, perfiles de Instagram de las personas usuarias). <%= config.siteName %> no controla ni se responsabiliza de dichos sitios ni de sus contenidos.</p>
+
+  <h2>7. Publicidad</h2>
+  <p>Parte de la Plataforma se financia con publicidad servida por Google AdSense. Los anuncios se identifican como «Publicidad». El tratamiento de datos asociado se explica en la Política de privacidad y la Política de cookies.</p>
+
+  <h2>8. Legislación aplicable y jurisdicción</h2>
+  <p>Este Aviso legal se rige por la legislación española. Para cualquier controversia, las partes se someterán a los Juzgados y Tribunales que correspondan conforme a derecho; cuando la persona usuaria tenga la condición de consumidora, serán competentes los del lugar de su domicilio.</p>
+</article>
+</div></main>
+<%- include('../partials/footer') %>

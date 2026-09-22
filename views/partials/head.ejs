@@ -1,0 +1,64 @@
+<%
+  const siteTitle = config.siteName + ' — La calle también tiene su pasarela';
+  const pageTitle = meta.title ? `${meta.title} · ${config.siteName}` : siteTitle;
+  const desc = meta.description || 'Comunidad de outfits streetwear: sube tus looks, descubre estilo real de la calle y guárdalo en colecciones. La calle también tiene su pasarela.';
+  const ogImage = meta.image || (config.siteUrl + '/static/img/og.png');
+  const adsOn = Boolean(config.adsense.client);
+  const loadAds = adsOn && (config.adsense.cmp === 'google' || consent !== null);
+%><!doctype html>
+<html lang="es" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title><%= pageTitle %></title>
+  <meta name="description" content="<%= desc %>">
+  <% if (meta.noindex) { %><meta name="robots" content="noindex, follow"><% } else { %><meta name="robots" content="index, follow, max-image-preview:large"><% } %>
+  <link rel="canonical" href="<%= url %>">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="color-scheme" content="dark">
+  <meta name="format-detection" content="telephone=no">
+
+  <meta property="og:site_name" content="<%= config.siteName %>">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:type" content="<%= meta.type || 'website' %>">
+  <meta property="og:title" content="<%= meta.title || siteTitle %>">
+  <meta property="og:description" content="<%= desc %>">
+  <meta property="og:url" content="<%= url %>">
+  <meta property="og:image" content="<%= ogImage %>">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= meta.title || siteTitle %>">
+  <meta name="twitter:description" content="<%= desc %>">
+  <meta name="twitter:image" content="<%= ogImage %>">
+
+  <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/static/img/icon-192.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="preload" href="/fonts/anton/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/space-mono/space-mono-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/css/main.css?v=1">
+
+  <script nonce="<%= nonce %>">
+    // Intro sólo la primera vez por sesión; sin animaciones si el usuario lo prefiere.
+    try { if (sessionStorage.getItem('vibra:intro') || matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('no-intro'); } catch (e) { document.documentElement.classList.add('no-intro'); }
+    // Google Consent Mode v2: todo denegado por defecto hasta que el usuario decida.
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('consent', 'default', { ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied', functionality_storage: 'granted', security_storage: 'granted', wait_for_update: 500 });
+    gtag('set', 'ads_data_redaction', true);
+    <% if (consent) { %>gtag('consent', 'update', { ad_storage: '<%= consent.ads ? "granted" : "denied" %>', ad_user_data: '<%= consent.ads ? "granted" : "denied" %>', ad_personalization: '<%= consent.personalized ? "granted" : "denied" %>' });<% } %>
+    window.VIBRA = { ads: <%- JSON.stringify(adsOn ? { client: config.adsense.client, cmp: config.adsense.cmp } : null) %>, csrf: <%- JSON.stringify(csrf || '') %>, user: <%- JSON.stringify(user ? { username: user.username } : null) %> };
+  </script>
+  <% if (loadAds) { %>
+  <script async nonce="<%= nonce %>" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=<%= encodeURIComponent(config.adsense.client) %>" crossorigin="anonymous"></script>
+  <% } %>
+  <script type="application/ld+json" nonce="<%= nonce %>"><%- JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: config.siteName,
+    alternateName: 'La calle también tiene su pasarela',
+    url: config.siteUrl + '/',
+    inLanguage: 'es',
+    potentialAction: { '@type': 'SearchAction', target: config.siteUrl + '/?q={search_term_string}', 'query-input': 'required name=search_term_string' },
+  }).replace(/</g, '\\u003c') %></script>
+  <% if (typeof jsonLd !== 'undefined' && jsonLd) { %><script type="application/ld+json" nonce="<%= nonce %>"><%- JSON.stringify(jsonLd).replace(/</g, '\\u003c') %></script><% } %>
+</head>
