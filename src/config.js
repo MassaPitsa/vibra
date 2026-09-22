@@ -82,8 +82,14 @@ export const config = {
     clientId: env.GOOGLE_CLIENT_ID || '',
     clientSecret: env.GOOGLE_CLIENT_SECRET || '',
   },
-  // Código de verificación de Google Search Console (etiqueta meta).
-  googleSiteVerification: env.GOOGLE_SITE_VERIFICATION || '',
+  // Código de verificación de Google Search Console. Admite tanto el código suelto
+  // como la etiqueta completa copiada de Search Console (extrae el content).
+  googleSiteVerification: (() => {
+    const raw = (env.GOOGLE_SITE_VERIFICATION || '').trim();
+    const fromTag = /content\s*=\s*["']([^"']+)["']/i.exec(raw);
+    const token = (fromTag ? fromTag[1] : raw).trim();
+    return /^[A-Za-z0-9_-]{10,100}$/.test(token) ? token : '';
+  })(),
 
   // Cloudflare Turnstile (anti-bots, opcional y respetuoso con la privacidad).
   turnstile: {
