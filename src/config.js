@@ -66,8 +66,11 @@ export const config = {
     region: env.S3_REGION || 'auto',
     accessKey: env.S3_ACCESS_KEY_ID || '',
     secretKey: env.S3_SECRET_ACCESS_KEY || '',
-    // URL pública del bucket (opcional). Si está vacía, las fotos se sirven a través de /media.
-    publicBase: (env.S3_PUBLIC_BASE_URL || '').replace(/\/$/, ''),
+    // URL pública del bucket (opcional). Si no es una URL válida (vacío, «-», «no»…),
+    // las fotos se sirven a través de /media desde el propio servidor.
+    publicBase: /^https?:\/\//i.test((env.S3_PUBLIC_BASE_URL || '').trim())
+      ? env.S3_PUBLIC_BASE_URL.trim().replace(/\/$/, '')
+      : '',
   },
 
   // Copia automática de la base de datos al bucket (para servidores sin disco persistente).
