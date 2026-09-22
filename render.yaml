@@ -36,8 +36,8 @@ services:
         sync: false
       - key: S3_BUCKET
         sync: false
-      - key: S3_REGION
-        value: auto
+      - key: S3_REGION        # Backblaze: eu-central-003, us-west-004… / Cloudflare R2: auto
+        sync: false
       - key: S3_ACCESS_KEY_ID
         sync: false
       - key: S3_SECRET_ACCESS_KEY
