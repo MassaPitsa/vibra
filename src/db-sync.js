@@ -76,12 +76,11 @@ export function startDbSync(db) {
       const { backup } = await import('node:sqlite');
       await backup(db, tmp);
       const data = await fsp.readFile(tmp);
-      await remove(KEY);
-      await save(KEY, data, 'application/octet-stream');
+      // PUT sobrescribe: no borramos antes (en Backblaze B2 eso dejaría versiones ocultas).
+      await save(KEY, data, 'application/octet-stream', { overwrite: true });
       const today = dailyKey();
       if (today !== lastDaily) {
-        await remove(today);
-        await save(today, data, 'application/octet-stream');
+        await save(today, data, 'application/octet-stream', { overwrite: true });
         await remove(dailyKey(new Date(Date.now() - 7 * 864e5)));
         lastDaily = today;
       }

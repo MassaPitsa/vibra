@@ -24,10 +24,10 @@ export function mediaAbsolute(name) {
 }
 
 /* ───────────── Operaciones ───────────── */
-export async function save(name, buffer, contentType = 'image/webp') {
+export async function save(name, buffer, contentType = 'image/webp', { overwrite = false } = {}) {
   const key = safeKey(name);
   if (!isRemote()) {
-    await fs.writeFile(path.join(config.uploadsDir, path.basename(key)), buffer, { flag: 'wx' });
+    await fs.writeFile(path.join(config.uploadsDir, path.basename(key)), buffer, { flag: overwrite ? 'w' : 'wx' });
     return;
   }
   const res = await s3('PUT', key, buffer, contentType);

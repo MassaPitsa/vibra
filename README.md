@@ -97,7 +97,7 @@ Recomendado: **Cloudflare** delante (DNS con proxy) para protección DDoS gratui
 
 La app puede funcionar **sin disco persistente**: guarda las fotos en un bucket compatible con S3 y replica la base de datos en ese mismo bucket, restaurándola sola al arrancar. Así valen alojamientos gratuitos como Render, Northflank o Koyeb.
 
-1. **Almacenamiento (gratis):** crea un bucket en [Cloudflare R2](https://dash.cloudflare.com) (10 GB gratis, sin coste de salida) o Backblaze B2. Genera una clave de API con permiso de lectura y escritura sobre ese bucket.
+1. **Almacenamiento (gratis):** crea un bucket en [Backblaze B2](https://www.backblaze.com/sign-up/b2-cloud-storage-backup-archive) (10 GB gratis y **sin tarjeta**) o en [Cloudflare R2](https://dash.cloudflare.com) (10 GB gratis, pide tarjeta). Genera una clave de aplicación con permiso de lectura y escritura sobre ese bucket. En B2, activa además la regla de ciclo de vida **«Keep only the last version of the file»** para que las copias antiguas no ocupen espacio.
 2. Rellena en el hosting: `S3_ENDPOINT`, `S3_BUCKET`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` y, si haces el bucket público, `S3_PUBLIC_BASE_URL`.
 3. **Servidor:** en Render usa el archivo `render.yaml` incluido (Blueprint). Pon `DATA_DIR=/tmp/vibra`.
 4. Comprueba en los registros del arranque que dice «Base de datos restaurada desde el bucket» (a partir del segundo despliegue) y «copia … subida».
