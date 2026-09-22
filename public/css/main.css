@@ -726,3 +726,41 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
   .hero__card { opacity: 1; }
   .manifesto-band .word { opacity: 1; }
 }
+
+/* ───────────── Notificaciones, seguidores y marcas ───────────── */
+.bell { position: relative; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line-2); color: var(--paper-2); transition: border-color .2s, color .2s; }
+.bell:hover { border-color: var(--paper); color: var(--paper); }
+.bell svg { width: 18px; height: 18px; }
+.bell.has-new::after { content: ''; position: absolute; top: 7px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 2px var(--ink); }
+.bell i { position: absolute; top: -6px; right: -6px; background: var(--accent); color: var(--ink); font: 700 9px/1 var(--mono); padding: 3px 4px; border-radius: 99px; font-style: normal; }
+.tabbar a.has-new svg { color: var(--accent); }
+
+.notif-list { list-style: none; margin: 0; padding: 0; max-width: 760px; }
+.notif { display: flex; gap: 14px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.notif.is-new { background: linear-gradient(90deg, rgba(255, 45, 45, .07), transparent 60%); }
+.notif__body { flex: 1; min-width: 0; }
+.notif__body p { margin: 0 0 3px; font-size: 15px; }
+.notif__time { font: 400 11px var(--mono); color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+.notif__thumb { width: 46px; height: 60px; overflow: hidden; flex: none; background: var(--ink-3); }
+.notif__thumb img { width: 100%; height: 100%; object-fit: cover; }
+.notif__icon { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line-2); flex: none; }
+.notif__icon svg { width: 18px; height: 18px; }
+.notif__icon--mod { color: var(--red); border-color: rgba(255, 61, 46, .5); }
+
+.people { list-style: none; margin: 0; padding: 0; max-width: 760px; }
+.person { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.person__main { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; }
+.person__txt { display: flex; flex-direction: column; min-width: 0; }
+.person__txt b { font-size: 15px; }
+.person__bio { font-size: 13px; color: var(--paper-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 44ch; }
+.follow-btn[aria-pressed='true'] { --bg: transparent; --fg: var(--paper); border-color: var(--line-2); }
+.follow-btn.pop { animation: savePop .5s var(--ease-out); }
+
+.brand-cloud { display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline; }
+.brand-chip { display: inline-flex; align-items: baseline; gap: 8px; border: 1px solid var(--line-2); padding: 10px 16px; border-radius: 999px; transition: all .25s var(--ease); }
+.brand-chip span { font: 400 calc(15px + var(--w, 1) * 3px)/1 var(--display); text-transform: uppercase; letter-spacing: .01em; }
+.brand-chip i { font: 700 10px var(--mono); color: var(--muted); font-style: normal; }
+.brand-chip:hover { background: var(--accent); border-color: var(--accent); color: var(--ink); transform: translateY(-2px); }
+.brand-chip:hover i { color: var(--ink); }
+.profile-stats a.stat { transition: color .2s; }
+.profile-stats a.stat:hover { color: var(--accent); }

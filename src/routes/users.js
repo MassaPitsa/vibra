@@ -22,9 +22,13 @@ r.get('/u/:username', (req, res, next) => {
   const stats = db.prepare(`SELECT
       (SELECT COUNT(*) FROM posts WHERE user_id = ? AND status = 'published') AS looks,
       (SELECT COALESCE(SUM(save_count), 0) FROM posts WHERE user_id = ? AND status = 'published') AS saves,
-      (SELECT COALESCE(SUM(view_count), 0) FROM posts WHERE user_id = ? AND status = 'published') AS views`).get(profile.id, profile.id, profile.id);
+      (SELECT COALESCE(SUM(view_count), 0) FROM posts WHERE user_id = ? AND status = 'published') AS views,
+      (SELECT COUNT(*) FROM follows WHERE following_id = ?) AS followers,
+      (SELECT COUNT(*) FROM follows WHERE follower_id = ?) AS following`)
+    .get(profile.id, profile.id, profile.id, profile.id, profile.id);
+  const iFollow = Boolean(req.user && db.prepare('SELECT 1 FROM follows WHERE follower_id = ? AND following_id = ?').get(req.user.id, profile.id));
   res.render('profile', {
-    profile, looks, stats, isMe,
+    profile, looks, stats, isMe, iFollow,
     collections: collectionsOf(profile.id, { onlyPublic: true }).filter((c) => c.count > 0),
     meta: {
       title: `${profile.display_name || profile.username} (@${profile.username})`,

@@ -10,7 +10,31 @@
     <div class="stat"><b class="<%= stats.open ? 'acid' : '' %>"><%= stats.open %></b><span>Denuncias abiertas</span></div>
   </div>
 
-  <h2 class="kicker" style="margin:30px 0 10px">Denuncias pendientes</h2>
+  <h2 class="kicker" style="margin:30px 0 10px">Revisión automática <%= queue.length ? '· ' + queue.length + ' pendiente(s)' : '' %></h2>
+  <% if (!queue.length) { %><p class="muted">Nada marcado por el detector de contenido sensible.</p><% } else { %>
+  <table class="admin-table">
+    <thead><tr><th>Look</th><th>Riesgo</th><th>Estado</th><th>Acciones</th></tr></thead>
+    <tbody>
+    <% queue.forEach((p) => { %>
+      <tr>
+        <td><a href="/look/<%= p.id %>" target="_blank"><% if (p.thumb) { %><img src="<%= media(p.thumb) %>" alt=""><% } %></a><div class="mono" style="font-size:11px;margin-top:6px">Nº <%= lookNumber(p.id) %> · @<%= p.username %><br><%= timeAgo(p.created_at) %></div></td>
+        <td><strong style="color:<%= p.flag_score >= 0.72 ? 'var(--red)' : '#ffb020' %>"><%= Math.round(p.flag_score * 100) %>%</strong><div class="muted mono" style="font-size:11px"><%= p.flag_reason || '' %></div></td>
+        <td><%= p.status === 'review' ? 'Oculto al público' : 'Publicado, marcado' %></td>
+        <td>
+          <form method="post" action="/admin/looks/<%= p.id %>/approve" style="display:inline"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn btn--accent btn--sm" type="submit">Aprobar</button></form>
+          <form method="post" action="/admin/looks/<%= p.id %>/remove" style="margin-top:8px">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <input class="input input--box" name="reason" required minlength="5" maxlength="500" placeholder="Motivo para el autor" style="font-size:13px;margin-bottom:6px">
+            <button class="btn btn--danger btn--sm" type="submit">Retirar</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+    </tbody>
+  </table>
+  <% } %>
+
+  <h2 class="kicker" style="margin:40px 0 10px">Denuncias pendientes</h2>
   <% if (!reports.length) { %><p class="muted">Todo limpio. ✦</p><% } else { %>
   <table class="admin-table">
     <thead><tr><th>Look</th><th>Motivo</th><th>Detalles</th><th>Acciones</th></tr></thead>

@@ -6,6 +6,8 @@ import { requireAuth, csrfMultipart, limiters } from '../security.js';
 import { uploader, processOutfitImage, removeFiles } from '../images.js';
 import { feed, getLook, topTags, topCities, siteStats, SORTS, userLooks } from '../queries.js';
 import { mediaAbsolute } from '../storage.js';
+import { moderateLook } from '../moderation.js';
+import { indexBrands } from '../brands.js';
 import { clean, parseTags, parsePieces, intParam, httpError, lookNumber, EMAIL_RE } from '../util.js';
 
 const r = Router();
@@ -113,14 +115,22 @@ r.post('/subir', requireAuth, limiters.upload, upload.array('photos', config.lim
 
     for (const f of files) saved.push(await processOutfitImage(f.buffer));
 
+    // Moderación automática de desnudos antes de publicar.
+    const verdict = await moderateLook(files.map((f) => f.buffer));
+
     const id = tx(() => {
-      const { lastInsertRowid } = db.prepare(`INSERT INTO posts (user_id, title, description, city, tags, pieces, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?)`).run(req.user.id, form.title, form.description, form.city, form.tags.join(','), JSON.stringify(form.pieces), now());
+      const { lastInsertRowid } = db.prepare(`INSERT INTO posts (user_id, title, description, city, tags, pieces, status, flag_score, flag_reason, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
+        req.user.id, form.title, form.description, form.city, form.tags.join(','), JSON.stringify(form.pieces),
+        verdict.hide ? 'review' : 'published', verdict.score, verdict.flag ? verdict.reason : null, now());
       const ins = db.prepare('INSERT INTO post_images (post_id, file, thumb, width, height, color, position) VALUES (?, ?, ?, ?, ?, ?, ?)');
       saved.forEach((img, i) => ins.run(lastInsertRowid, img.file, img.thumb, img.width, img.height, img.color, i));
+      indexBrands(Number(lastInsertRowid), form.pieces);
       return Number(lastInsertRowid);
     });
-    req.session.flash = { type: 'ok', msg: `Look Nº ${lookNumber(id)} en pasarela. Que empiece el desfile.` };
+    req.session.flash = verdict.hide
+      ? { type: 'err', msg: 'Tu look ha quedado en revisión: nuestro sistema ha detectado posible contenido sensible. Lo revisará una persona en menos de 24 h.' }
+      : { type: 'ok', msg: `Look Nº ${lookNumber(id)} en pasarela. Que empiece el desfile.` };
     res.redirect(`/look/${id}`);
   } catch (e) {
     await removeFiles(...saved.flatMap((s) => [s.file, s.thumb]));
@@ -164,6 +174,7 @@ r.post('/look/:id/editar', requireAuth, (req, res) => {
   if (problem) return res.status(400).render('upload', { meta: { title: 'Editar look', noindex: true }, form, error: problem, edit: look });
   db.prepare('UPDATE posts SET title = ?, description = ?, city = ?, tags = ?, pieces = ? WHERE id = ?')
     .run(form.title, form.description, form.city, form.tags.join(','), JSON.stringify(form.pieces), look.id);
+  indexBrands(look.id, form.pieces);
   req.session.flash = { type: 'ok', msg: 'Cambios guardados.' };
   res.redirect(`/look/${look.id}`);
 });

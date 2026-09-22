@@ -14,6 +14,9 @@
 <%- include('partials/head', { jsonLd }) %>
 <%- include('partials/header') %>
 <main id="main">
+  <% if (look.status === 'review') { %>
+    <div class="notice" style="margin: 20px var(--gutter) 0; border-color: var(--acid, #ffb020)"><b style="color:#ffb020">En revisión</b>Nuestro sistema automático ha detectado posible contenido sensible en este look, así que de momento solo lo ves tú. Una persona lo revisará en menos de 24 horas. Si crees que es un error, escríbenos desde <a class="link-u" href="/contacto">contacto</a>.</div>
+  <% } %>
   <% if (look.status === 'removed') { %>
     <div class="notice" style="margin: 20px var(--gutter) 0"><b>Retirado por moderación</b>Este look no es visible públicamente. Motivo: <%= look.removal_reason || 'incumplimiento de las normas de la comunidad' %>. Si no estás de acuerdo, puedes reclamar escribiendo a <a class="link-u" href="/contacto">contacto</a>.</div>
   <% } %>

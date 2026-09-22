@@ -1,0 +1,51 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<%
+  const texto = { save: 'ha guardado tu look', collect: 'ha añadido tu look a una colección', follow: 'te sigue', moderation: 'Moderación' };
+%>
+<main id="main">
+  <div class="saved-head">
+    <div>
+      <span class="kicker kicker--accent">Tu backstage</span>
+      <h1 class="display">Activi<span class="serif accent">dad</span></h1>
+    </div>
+    <p class="muted" style="max-width:340px;margin:0">Quién guarda tus looks, quién te sigue y las decisiones de moderación.</p>
+  </div>
+
+  <section class="section" style="padding-top:10px">
+    <% if (!items.length) { %>
+      <div class="empty">
+        <p class="display">Todo tranquilo</p>
+        <p>Cuando alguien guarde uno de tus looks o empiece a seguirte, aparecerá aquí.</p>
+        <a class="btn btn--accent" href="/subir">Subir un look <span class="arrow">→</span></a>
+      </div>
+    <% } else { %>
+      <ul class="notif-list">
+        <% items.forEach((n) => { %>
+          <li class="notif <%= n.read_at ? '' : 'is-new' %>">
+            <% if (n.type === 'moderation') { %>
+              <span class="notif__icon notif__icon--mod" aria-hidden="true"><%- icon('flag') %></span>
+              <div class="notif__body">
+                <p><strong>Moderación.</strong> <%= n.text %></p>
+                <span class="notif__time"><%= timeAgo(n.created_at) %></span>
+              </div>
+            <% } else { %>
+              <a href="/u/<%= n.actor %>" class="notif__avatar" aria-label="Perfil de @<%= n.actor %>">
+                <% if (n.actor_avatar) { %><img class="avatar" src="<%= media(n.actor_avatar) %>" alt="" width="40" height="40" style="width:40px;height:40px">
+                <% } else { %><span class="avatar" style="width:40px;height:40px"><%= (n.actor || '?')[0].toUpperCase() %></span><% } %>
+              </a>
+              <div class="notif__body">
+                <p><a href="/u/<%= n.actor %>"><strong>@<%= n.actor %></strong></a> <%= texto[n.type] || 'ha interactuado contigo' %><% if (n.post_title) { %> «<a class="link-u" href="/look/<%= n.post_id %>"><%= n.post_title %></a>»<% } %></p>
+                <span class="notif__time"><%= timeAgo(n.created_at) %></span>
+              </div>
+            <% } %>
+            <% if (n.thumb && n.post_id) { %>
+              <a href="/look/<%= n.post_id %>" class="notif__thumb"><img src="<%= media(n.thumb) %>" alt="" loading="lazy"></a>
+            <% } %>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </section>
+</main>
+<%- include('partials/footer') %>

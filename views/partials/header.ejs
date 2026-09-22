@@ -21,12 +21,15 @@
     <a href="/" class="logo" aria-label="<%= config.siteName %> — inicio"><%= config.siteName %><sup>FW26</sup></a>
     <a href="/" class="nav-link" <%- path === '/' ? 'aria-current="page"' : '' %>>Feed</a>
     <a href="/pasarela" class="nav-link">Pasarela</a>
+    <a href="/marcas" class="nav-link" <%- path.startsWith("/marca") ? 'aria-current="page"' : '' %>>Marcas</a>
     <a href="/sobre" class="nav-link" <%- path === '/sobre' ? 'aria-current="page"' : '' %>>Manifiesto</a>
   </nav>
   <div class="header__center"><span class="live" data-clock>Madrid · en directo</span></div>
   <div class="header__right">
     <% if (user) { %>
+      <a href="/siguiendo" class="nav-link" <%- path === '/siguiendo' ? 'aria-current="page"' : '' %>>Siguiendo</a>
       <a href="/guardados" class="nav-link" <%- path.startsWith('/guardados') ? 'aria-current="page"' : '' %>>Guardados</a>
+      <a href="/notificaciones" class="bell <%= unread ? 'has-new' : '' %>" aria-label="Notificaciones<%= unread ? ' (' + unread + ' sin leer)' : '' %>" title="Notificaciones"><%- icon('bell') %><% if (unread) { %><i><%= unread > 9 ? '9+' : unread %></i><% } %></a>
       <a href="/subir" class="btn-plus magnetic" aria-label="Subir un look" title="Subir look">+</a>
       <div class="menu" data-menu>
         <button type="button" aria-haspopup="true" aria-expanded="false" aria-label="Menú de cuenta" data-menu-btn>
@@ -35,6 +38,8 @@
         <div class="menu__panel" role="menu">
           <a href="/u/<%= user.username %>" role="menuitem">Mi perfil · @<%= user.username %></a>
           <a href="/guardados" role="menuitem">Guardados y colecciones</a>
+          <a href="/notificaciones" role="menuitem">Notificaciones<%= unread ? ' (' + unread + ')' : '' %></a>
+          <a href="/siguiendo" role="menuitem">Feed de seguidos</a>
           <a href="/subir" role="menuitem">Subir look</a>
           <a href="/ajustes" role="menuitem">Ajustes y privacidad</a>
           <% if (user.role === 'admin') { %><a href="/admin" role="menuitem">Moderación</a><% } %>

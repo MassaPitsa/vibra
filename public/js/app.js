@@ -713,6 +713,32 @@
     } catch { /* toast */ }
   });
 
+  /* ═══════════════ Seguir a otras personas ═══════════════ */
+  document.addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-follow]');
+    if (!b) return;
+    e.preventDefault();
+    if (!V.user) { location.href = '/entrar?next=' + encodeURIComponent(location.pathname); return; }
+    const username = b.dataset.follow;
+    const want = b.getAttribute('aria-pressed') !== 'true';
+    const label = b.querySelector('span');
+    const paint = (following) => {
+      b.setAttribute('aria-pressed', following);
+      b.classList.toggle('btn--ghost', following);
+      b.classList.toggle('btn--accent', !following);
+      if (label) label.textContent = following ? 'Siguiendo' : 'Seguir';
+    };
+    paint(want);
+    if (want && !reduced) { b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }
+    try {
+      const r = await api('/api/usuarios/' + encodeURIComponent(username) + '/seguir', { following: want });
+      paint(r.following);
+      const counter = $('[data-followers]');
+      if (counter) counter.textContent = new Intl.NumberFormat('es-ES', { notation: 'compact' }).format(r.followers);
+      toast(r.following ? 'Ahora sigues a @' + username + '.' : 'Has dejado de seguir a @' + username + '.');
+    } catch { paint(!want); }
+  });
+
   /* ═══════════════ Registro: pase backstage en vivo ═══════════════ */
   const uname = $('[data-username]');
   const passName = $('[data-pass-name]');

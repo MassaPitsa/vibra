@@ -13,6 +13,8 @@ import { lookNumber, timeAgo, compact, formatDate, escapeHtml } from './util.js'
 import { icon } from './icons.js';
 import { isRemote, fetchObject, media, mediaAbsolute, checkStorage } from './storage.js';
 import { startDbSync } from './db-sync.js';
+import { unreadCount, purgeOld } from './notifications.js';
+import { backfillBrands } from './brands.js';
 import authRoutes from './routes/auth.js';
 import googleRoutes from './routes/google.js';
 import postRoutes from './routes/posts.js';
@@ -20,6 +22,7 @@ import saveRoutes from './routes/saves.js';
 import userRoutes from './routes/users.js';
 import legalRoutes from './routes/legal.js';
 import adminRoutes from './routes/admin.js';
+import socialRoutes from './routes/social.js';
 import metaRoutes from './routes/meta.js';
 
 const app = express();
@@ -162,6 +165,7 @@ app.use((req, res, next) => {
     path: req.path,
     url: config.siteUrl + req.originalUrl.split('?')[0],
     flash: req.session.flash || null,
+    unread: req.user ? unreadCount(req.user.id) : 0,
     lookNumber, timeAgo, compact, formatDate, icon, legalVal, media, mediaAbsolute,
     meta: {},
   });
@@ -204,6 +208,7 @@ app.use(authRoutes);
 app.use(googleRoutes);
 app.use(saveRoutes);
 app.use(userRoutes);
+app.use(socialRoutes);
 app.use(adminRoutes);
 app.use(postRoutes);
 
@@ -225,6 +230,7 @@ app.use((err, req, res, next) => {
     return res.status(status).json({ error: true, message });
   }
   Object.assign(res.locals, { lookNumber, timeAgo, compact, formatDate, icon, legalVal, media, mediaAbsolute });
+  res.locals.unread ??= 0;
   res.locals.nonce ??= '';
   res.locals.user ??= null;
   res.locals.config ??= config;
@@ -243,6 +249,10 @@ const server = app.listen(config.port, () => {
   if (missing.length) console.warn(`  ⚠  Faltan datos legales en .env: ${missing.join(', ')}\n`);
   console.log(`  Fotos: ${isRemote() ? `bucket S3 «${config.s3.bucket}»${config.s3.publicBase ? ' (URL pública)' : ' (servidas por la app)'}` : `disco local (${config.uploadsDir})`}`);
   checkStorage().then((ok) => { if (ok) dbSync = startDbSync(db); });
+  const filled = backfillBrands();
+  if (filled) console.log(`  Marcas indexadas en ${filled} look(s) anteriores.`);
+  purgeOld();
+  setInterval(purgeOld, 24 * 3600_000).unref();
 });
 let dbSync = null;
 

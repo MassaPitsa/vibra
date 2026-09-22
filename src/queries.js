@@ -36,8 +36,9 @@ export const SORTS = {
   tendencia: '(SELECT COUNT(*) FROM saves s2 WHERE s2.post_id = p.id AND s2.created_at > :week) DESC, p.created_at DESC',
 };
 
-export function feed({ userId = null, tag = '', q = '', sort = 'recientes', page = 1, city = '' } = {}) {
+export function feed({ userId = null, tag = '', q = '', sort = 'recientes', page = 1, city = '', following = false } = {}) {
   const where = ["p.status = 'published'", "u.status = 'active'"];
+  if (following && userId) where.push('p.user_id IN (SELECT following_id FROM follows WHERE follower_id = ' + Number(userId) + ')');
   const params = {};
   if (tag) { where.push("(',' || p.tags || ',') LIKE :tag ESCAPE '\\'"); params.tag = `%,${likeEscape(tag)},%`; }
   if (city) { where.push('p.city = :city COLLATE NOCASE'); params.city = city; }
@@ -60,7 +61,7 @@ export function getLook(id, userId = null) {
 }
 
 export function userLooks(ownerId, viewerId, { includeHidden = false } = {}) {
-  const status = includeHidden ? "p.status IN ('published','removed')" : "p.status = 'published'";
+  const status = includeHidden ? "p.status IN ('published','removed','review')" : "p.status = 'published'";
   return db.prepare(`${BASE_SELECT(viewerId)} WHERE p.user_id = ? AND ${status} ORDER BY p.created_at DESC LIMIT 200`).all(ownerId).map(hydrate);
 }
 

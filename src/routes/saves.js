@@ -3,11 +3,12 @@ import { db, now, tx, refreshSaveCount } from '../db.js';
 import { requireAuth, limiters } from '../security.js';
 import { savedLooks, collectionsOf } from '../queries.js';
 import { clean, intParam, httpError } from '../util.js';
+import { notify } from '../notifications.js';
 
 const r = Router();
 const MAX_COLLECTIONS = 100;
 
-const postExists = db.prepare("SELECT id FROM posts WHERE id = ? AND status = 'published'");
+const postExists = db.prepare("SELECT id, user_id, title FROM posts WHERE id = ? AND status = 'published'");
 const ownCollection = db.prepare('SELECT * FROM collections WHERE id = ? AND user_id = ?');
 
 function getOwnCollection(req, id) {
@@ -20,6 +21,7 @@ function getOwnCollection(req, id) {
 r.post('/api/looks/:id/save', requireAuth, limiters.api, (req, res) => {
   const postId = intParam(req.params.id);
   if (!postId || !postExists.get(postId)) throw httpError(404, 'Look no encontrado.');
+  const post = postExists.get(postId);
   const already = db.prepare('SELECT 1 FROM saves WHERE user_id = ? AND post_id = ?').get(req.user.id, postId);
   const want = typeof req.body.saved === 'boolean' ? req.body.saved : !already;
 
@@ -33,6 +35,7 @@ r.post('/api/looks/:id/save', requireAuth, limiters.api, (req, res) => {
     }
     refreshSaveCount(postId);
   });
+  if (want && !already) notify({ userId: post.user_id, type: 'save', actorId: req.user.id, postId });
   const { save_count } = db.prepare('SELECT save_count FROM posts WHERE id = ?').get(postId);
   res.json({ saved: want, count: save_count });
 });

@@ -84,6 +84,37 @@ db.exec(`
   );
   CREATE INDEX IF NOT EXISTS idx_citems_post ON collection_items(post_id);
 
+  CREATE TABLE IF NOT EXISTS follows (
+    follower_id  INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    following_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at   INTEGER NOT NULL,
+    PRIMARY KEY (follower_id, following_id),
+    CHECK (follower_id != following_id)
+  );
+  CREATE INDEX IF NOT EXISTS idx_follows_following ON follows(following_id, created_at DESC);
+
+  CREATE TABLE IF NOT EXISTS notifications (
+    id         INTEGER PRIMARY KEY,
+    user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    type       TEXT NOT NULL,              -- save | follow | collect | moderation
+    actor_id   INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    post_id    INTEGER REFERENCES posts(id) ON DELETE CASCADE,
+    text       TEXT NOT NULL DEFAULT '',
+    read_at    INTEGER,
+    created_at INTEGER NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS idx_notif_user ON notifications(user_id, created_at DESC);
+  CREATE INDEX IF NOT EXISTS idx_notif_unread ON notifications(user_id, read_at);
+
+  -- Marcas citadas en los créditos de cada look (permite páginas de marca rápidas)
+  CREATE TABLE IF NOT EXISTS post_brands (
+    post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+    slug    TEXT NOT NULL,
+    name    TEXT NOT NULL,
+    PRIMARY KEY (post_id, slug)
+  );
+  CREATE INDEX IF NOT EXISTS idx_brands_slug ON post_brands(slug);
+
   CREATE TABLE IF NOT EXISTS reports (
     id          INTEGER PRIMARY KEY,
     post_id     INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
@@ -116,6 +147,13 @@ const userCols = db.prepare('PRAGMA table_info(users)').all().map((c) => c.name)
 if (!userCols.includes('google_sub')) db.exec('ALTER TABLE users ADD COLUMN google_sub TEXT');
 if (!userCols.includes('email_verified')) db.exec('ALTER TABLE users ADD COLUMN email_verified INTEGER NOT NULL DEFAULT 0');
 db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_users_google ON users(google_sub) WHERE google_sub IS NOT NULL');
+
+const postCols = db.prepare('PRAGMA table_info(posts)').all().map((c) => c.name);
+// Moderación automática: puntuación de riesgo y motivo, para la cola de revisión.
+if (!postCols.includes('flag_score')) db.exec('ALTER TABLE posts ADD COLUMN flag_score REAL NOT NULL DEFAULT 0');
+if (!postCols.includes('flag_reason')) db.exec('ALTER TABLE posts ADD COLUMN flag_reason TEXT');
+if (!postCols.includes('reviewed_at')) db.exec('ALTER TABLE posts ADD COLUMN reviewed_at INTEGER');
+db.exec("CREATE INDEX IF NOT EXISTS idx_posts_flagged ON posts(flag_score DESC) WHERE flag_score > 0 AND reviewed_at IS NULL");
 
 export const now = () => Date.now();
 

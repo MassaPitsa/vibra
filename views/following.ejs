@@ -1,0 +1,48 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<main id="main">
+  <div class="saved-head">
+    <div>
+      <span class="kicker kicker--accent">Tu selección</span>
+      <h1 class="display">Siguien<span class="serif accent">do</span></h1>
+    </div>
+    <nav class="seg" style="align-self:center">
+      <a href="/">Todos</a>
+      <a href="/siguiendo" class="is-active">Siguiendo</a>
+    </nav>
+  </div>
+
+  <section class="section" style="padding-top:10px">
+    <% if (items.length) { %>
+      <div class="grid" data-grid><%- include('partials/cards', { items }) %></div>
+      <% if (hasMore) { %><p style="text-align:center;margin-top:30px"><a class="btn btn--ghost" href="?page=<%= page + 1 %>">Más looks</a></p><% } %>
+    <% } else if (!count) { %>
+      <div class="empty">
+        <p class="display">No sigues a nadie</p>
+        <p>Sigue a la gente cuyo estilo te inspire y sus looks aparecerán aquí, sin ruido.</p>
+      </div>
+      <% if (suggestions.length) { %>
+        <h2 class="kicker" style="margin:40px 0 16px">Perfiles para empezar</h2>
+        <ul class="people">
+          <% suggestions.forEach((p) => { %>
+            <li class="person">
+              <a href="/u/<%= p.username %>" class="person__main">
+                <% if (p.avatar) { %><img class="avatar" src="<%= media(p.avatar) %>" alt="" width="46" height="46" style="width:46px;height:46px">
+                <% } else { %><span class="avatar" style="width:46px;height:46px"><%= p.username[0].toUpperCase() %></span><% } %>
+                <span class="person__txt"><b><%= p.display_name || p.username %></b><span class="mono muted">@<%= p.username %> · <%= p.looks %> looks</span></span>
+              </a>
+              <button type="button" class="btn btn--sm btn--ghost follow-btn" data-follow="<%= p.username %>" aria-pressed="false"><span>Seguir</span></button>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    <% } else { %>
+      <div class="empty">
+        <p class="display">Sin novedades</p>
+        <p>Los perfiles que sigues aún no han publicado nada. Descubre más gente en el feed general.</p>
+        <a class="btn btn--accent" href="/">Ir al feed <span class="arrow">→</span></a>
+      </div>
+    <% } %>
+  </section>
+</main>
+<%- include('partials/footer') %>

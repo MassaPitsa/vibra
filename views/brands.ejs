@@ -1,0 +1,32 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<main id="main">
+  <section class="hero" data-hero style="padding-bottom:40px">
+    <span class="crop crop--tl"></span><span class="crop crop--tr"></span>
+    <div class="hero__meta"><span class="kicker kicker--accent">Índice de marcas</span><span class="kicker"><%= brands.length %> marcas citadas</span></div>
+    <h1 class="display hero__title" style="font-size:clamp(48px,9vw,150px)">
+      <span class="line"><span>Marcas</span></span>
+      <span class="line"><span class="serif">en la calle</span></span>
+    </h1>
+    <p class="hero__lede rv">Lo que la gente lleva de verdad, no lo que dicen los anuncios. Cada marca sale de los créditos que escribe la propia comunidad.</p>
+  </section>
+
+  <section class="section">
+    <% if (!brands.length) { %>
+      <div class="empty">
+        <p class="display">Aún sin marcas</p>
+        <p>Cuando la gente rellene los créditos de sus looks («Chaqueta — Carhartt WIP»), aparecerán aquí automáticamente.</p>
+        <a class="btn btn--accent" href="/subir">Subir un look con créditos</a>
+      </div>
+    <% } else { %>
+      <div class="brand-cloud">
+        <% brands.forEach((b) => { %>
+          <a class="brand-chip" href="/marca/<%= b.slug %>" style="--w: <%= Math.min(3, 1 + Math.log2(b.n)) %>">
+            <span><%= b.name %></span><i><%= b.n %></i>
+          </a>
+        <% }) %>
+      </div>
+    <% } %>
+  </section>
+</main>
+<%- include('partials/footer') %>

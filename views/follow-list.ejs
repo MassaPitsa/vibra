@@ -1,0 +1,39 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<main id="main">
+  <div class="saved-head">
+    <div>
+      <span class="kicker kicker--accent"><a href="/u/<%= profile.username %>" style="color:inherit">@<%= profile.username %></a></span>
+      <h1 class="display"><%= mode === 'seguidores' ? 'Seguidores' : 'Siguiendo' %></h1>
+    </div>
+    <span class="kicker"><%= people.length %> <%= people.length === 1 ? 'perfil' : 'perfiles' %></span>
+  </div>
+  <section class="section" style="padding-top:10px">
+    <% if (!people.length) { %>
+      <div class="empty">
+        <p class="display"><%= mode === 'seguidores' ? 'Sin seguidores' : 'No sigue a nadie' %></p>
+        <p><%= mode === 'seguidores' ? 'Todavía nadie sigue este perfil.' : 'Cuando siga a alguien, aparecerá aquí.' %></p>
+      </div>
+    <% } else { %>
+      <ul class="people">
+        <% people.forEach((p) => { %>
+          <li class="person">
+            <a href="/u/<%= p.username %>" class="person__main">
+              <% if (p.avatar) { %><img class="avatar" src="<%= media(p.avatar) %>" alt="" width="46" height="46" style="width:46px;height:46px">
+              <% } else { %><span class="avatar" style="width:46px;height:46px"><%= p.username[0].toUpperCase() %></span><% } %>
+              <span class="person__txt">
+                <b><%= p.display_name || p.username %></b>
+                <span class="mono muted">@<%= p.username %></span>
+                <% if (p.bio) { %><span class="person__bio"><%= p.bio %></span><% } %>
+              </span>
+            </a>
+            <% if (user && !p.isMe) { %>
+              <% const sigo = mine.has(p.username); %><button type="button" class="btn btn--sm follow-btn <%= sigo ? 'btn--ghost' : 'btn--accent' %>" data-follow="<%= p.username %>" aria-pressed="<%= sigo %>"><span><%= sigo ? 'Siguiendo' : 'Seguir' %></span></button>
+            <% } %>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </section>
+</main>
+<%- include('partials/footer') %>

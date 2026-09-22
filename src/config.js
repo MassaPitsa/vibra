@@ -93,6 +93,13 @@ export const config = {
     return /^[A-Za-z0-9_-]{10,100}$/.test(token) ? token : '';
   })(),
 
+  // Moderación automática de imágenes. Sin credenciales usa el análisis local;
+  // con ellas (sightengine.com) el resultado es mucho más fiable.
+  moderation: {
+    user: env.SIGHTENGINE_USER || '',
+    secret: env.SIGHTENGINE_SECRET || '',
+  },
+
   // Cloudflare Turnstile (anti-bots, opcional y respetuoso con la privacidad).
   turnstile: {
     siteKey: env.TURNSTILE_SITE_KEY || '',

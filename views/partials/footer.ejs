@@ -7,6 +7,7 @@
       <a href="/pasarela">Modo pasarela</a>
       <a href="/?orden=tendencia">Tendencia</a>
       <a href="/?orden=top">Más guardados</a>
+      <a href="/marcas">Marcas</a>
     </div>
     <div>
       <h3>Comunidad</h3>
@@ -38,7 +39,7 @@
 
 <nav class="tabbar" aria-label="Navegación inferior">
   <a href="/" <%- path === '/' ? 'aria-current="page"' : '' %>><%- icon('home') %>Feed</a>
-  <a href="/pasarela"><%- icon('runway') %>Pasarela</a>
+  <% if (user) { %><a href="/notificaciones" class="<%= unread ? 'has-new' : '' %>" <%- path === '/notificaciones' ? 'aria-current="page"' : '' %>><%- icon('bell') %>Avisos</a><% } else { %><a href="/pasarela"><%- icon('runway') %>Pasarela</a><% } %>
   <a href="/subir" aria-label="Subir look"><span class="tabbar__plus"><%- icon('plus') %></span></a>
   <a href="/guardados" <%- path.startsWith('/guardados') ? 'aria-current="page"' : '' %>><%- icon('bookmark') %>Guardados</a>
   <a href="<%= user ? '/u/' + user.username : '/entrar' %>" <%- user && path === '/u/' + user.username ? 'aria-current="page"' : '' %>><%- icon('user') %><%= user ? 'Perfil' : 'Entrar' %></a>

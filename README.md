@@ -12,6 +12,10 @@ Comunidad de outfits streetwear con estética de fashion week. La gente sube sus
 - Ficha de look estilo desfile: «Look Nº 014», galería con zoom, **créditos de prendas**, etiquetas, vistas y guardados.
 - Guardar con animación + hoja «Guardar en colección» (como TikTok). Página de **Guardados** con colecciones en forma de entradas de desfile: crear, renombrar, borrar, hacer pública/privada, compartir y añadir en bloque desde guardados.
 - Subida con arrastrar y soltar, reordenar fotos (la primera es la portada), barra de progreso, límite diario anti-spam.
+- **Seguidores** con feed propio «Siguiendo», y listas de seguidores y seguidos.
+- **Notificaciones** dentro de la web (quién guarda tus looks, quién te sigue, decisiones de moderación) con contador en la campana.
+- **Páginas de marca** (`/marca/carhartt-wip`) generadas solas desde los créditos, más el índice `/marcas`: contenido con mucho potencial en buscadores.
+- **Moderación automática de desnudos** al publicar: lo comprometido queda oculto a la espera de revisión humana y el resto se marca en el panel.
 - Perfiles públicos, ajustes, cambio de contraseña, recuperación por email.
 - Moderación (`/admin`): denuncias, retirada con motivo visible para el autor, restaurar, suspender cuentas.
 - Diseño propio: intro animada, cursor personalizado, grano de película, ticker, textos que se revelan, botones magnéticos, parallax, pase «backstage» en 3D en el registro, transiciones entre páginas, sello giratorio, 404 con glitch. Respeta «reducir movimiento».

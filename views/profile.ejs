@@ -14,10 +14,14 @@
       </div>
       <% if (isMe) { %>
         <div style="display:flex;gap:10px"><a class="btn btn--ghost btn--sm" href="/ajustes">Editar perfil</a><a class="btn btn--accent btn--sm" href="/subir">+ Nuevo look</a></div>
+      <% } else { %>
+        <button type="button" class="btn btn--sm follow-btn <%= iFollow ? 'btn--ghost' : 'btn--accent' %>" data-follow="<%= profile.username %>" aria-pressed="<%= iFollow %>"><span><%= iFollow ? 'Siguiendo' : 'Seguir' %></span></button>
       <% } %>
     </div>
     <div class="profile-stats">
       <div class="stat"><b><%= compact(stats.looks) %></b><span>Looks</span></div>
+      <a class="stat" href="/u/<%= profile.username %>/seguidores"><b data-followers><%= compact(stats.followers) %></b><span>Seguidores</span></a>
+      <a class="stat" href="/u/<%= profile.username %>/siguiendo"><b><%= compact(stats.following) %></b><span>Siguiendo</span></a>
       <div class="stat"><b><%= compact(stats.saves) %></b><span>Veces guardado</span></div>
       <div class="stat"><b><%= compact(stats.views) %></b><span>Vistas</span></div>
     </div>
