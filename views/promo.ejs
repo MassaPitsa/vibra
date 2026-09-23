@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VIBRA · vídeo de promoción</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="/static/css/main.css?v=1">
+<style>
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; cursor: none; }
+  /* Lienzo fijo 9:16: se escala al tamaño de la pantalla, así la grabación siempre encaja */
+  .stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 0 0; background: var(--ink); overflow: hidden; }
+  .scene { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+  .scene.on { opacity: 1; }
+  .pad { position: absolute; left: 70px; right: 70px; }
+  .k { font: 700 26px/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; background: var(--accent); color: var(--ink); padding: 10px 14px; display: inline-block; }
+  .big { font: 400 118px/.94 var(--display); text-transform: uppercase; color: var(--paper); margin: 26px 0 0; letter-spacing: -.01em; }
+  .big .ac { color: var(--accent); }
+  .big .se { font-family: var(--serif); font-style: italic; text-transform: none; }
+  .sub { font: 400 30px/1.4 var(--sans); color: var(--paper-2); margin-top: 26px; }
+  .up > * { opacity: 0; transform: translateY(46px); }
+  .scene.on .up > * { animation: up .8s var(--ease-out) forwards; }
+  .scene.on .up > :nth-child(2) { animation-delay: .12s; }
+  .scene.on .up > :nth-child(3) { animation-delay: .24s; }
+  .scene.on .up > :nth-child(4) { animation-delay: .36s; }
+  @keyframes up { to { opacity: 1; transform: none; } }
+
+  /* 1 · Intro */
+  .intro-word { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .intro-word span { display: inline-block; font: 400 260px/1 var(--display); color: var(--paper); }
+  .scene.on .intro-word span { animation: pop .7s var(--ease-out) backwards; }
+  .intro-word span:nth-child(2) { animation-delay: .07s; } .intro-word span:nth-child(3) { animation-delay: .14s; }
+  .intro-word span:nth-child(4) { animation-delay: .21s; } .intro-word span:nth-child(5) { animation-delay: .28s; }
+  @keyframes pop { from { opacity: 0; transform: translateY(70px) scale(.9); } }
+  .strip { position: absolute; left: 0; right: 0; height: 74px; background: var(--accent); color: var(--ink); display: flex; align-items: center; overflow: hidden; }
+  .strip div { display: flex; gap: 40px; white-space: nowrap; font: 700 26px var(--mono); letter-spacing: .18em; text-transform: uppercase; animation: slide 14s linear infinite; padding-left: 40px; }
+  @keyframes slide { to { transform: translateX(-50%); } }
+
+  /* 3 · Rejilla de looks */
+  .grid3 { position: absolute; inset: -60px 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .grid3 figure { margin: 0; overflow: hidden; background: var(--ink-3); aspect-ratio: 3/4; }
+  .grid3 img { width: 100%; height: 100%; object-fit: cover; }
+  .scene.on .grid3 { animation: drift 9s linear forwards; }
+  @keyframes drift { from { transform: translateY(60px); } to { transform: translateY(-420px); } }
+  .veil { position: absolute; inset: 0; background: linear-gradient(transparent 35%, rgba(10,10,10,.92) 78%); }
+
+  /* 4 · Modo pasarela */
+  .runway-shot { position: absolute; inset: 0; }
+  .runway-shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
+  .scene.on .runway-shot img { animation: swap 5.4s linear forwards; }
+  .scene.on .runway-shot img:nth-child(2) { animation-delay: 1.8s; }
+  .scene.on .runway-shot img:nth-child(3) { animation-delay: 3.6s; }
+  @keyframes swap { 0% { opacity: 0; transform: scale(1.12); } 6% { opacity: 1; } 33% { opacity: 1; } 40% { opacity: 0; } 100% { opacity: 0; transform: scale(1); } }
+  .rail { position: absolute; right: 56px; bottom: 300px; display: flex; flex-direction: column; gap: 34px; align-items: center; }
+  .rail i { width: 92px; height: 92px; border-radius: 50%; border: 2px solid rgba(239,235,227,.5); display: grid; place-items: center; background: rgba(10,10,10,.45); }
+  .rail svg { width: 38px; height: 38px; color: var(--paper); }
+  .rail i.hit { background: var(--accent); border-color: var(--accent); animation: hit .6s var(--ease-out); }
+  .rail i.hit svg { color: var(--ink); fill: var(--ink); }
+  @keyframes hit { 0% { transform: scale(1); } 40% { transform: scale(.7); } 100% { transform: scale(1); } }
+
+  /* 5 · Colecciones */
+  .tickets2 { position: absolute; left: 70px; right: 70px; bottom: 420px; display: flex; gap: 22px; }
+  .tk { flex: 1; background: var(--ink-2); border: 1px solid var(--line-2); padding: 14px; transform: rotate(var(--r)); }
+  .tk .cov { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; aspect-ratio: 1; overflow: hidden; }
+  .tk img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 1; }
+  .tk b { display: block; font: 400 34px/1 var(--display); text-transform: uppercase; color: var(--paper); margin-top: 14px; }
+  .tk span { font: 700 18px var(--mono); color: var(--muted); }
+  .scene.on .tk { animation: up .7s var(--ease-out) backwards; }
+  .scene.on .tk:nth-child(2) { animation-delay: .15s; } .scene.on .tk:nth-child(3) { animation-delay: .3s; }
+
+  /* 6 · OG */
+  .og-big { position: absolute; inset: 0; display: grid; place-items: center; }
+  .og-big div { width: 460px; height: 460px; border-radius: 50%; background: var(--accent); display: grid; place-items: center; font: 400 190px/1 var(--display); color: var(--ink); }
+  .scene.on .og-big div { animation: stamp .8s var(--ease-out) backwards; }
+  @keyframes stamp { from { transform: scale(2.4) rotate(-14deg); opacity: 0; } }
+
+  /* 7 · Cierre */
+  .end { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; }
+  .end .logo2 { font: 400 250px/1 var(--display); color: var(--paper); }
+  .end .url { font: 700 40px var(--mono); color: var(--paper); letter-spacing: .06em; margin-top: 40px; }
+  .end .bio { font: 400 28px var(--mono); color: var(--muted); letter-spacing: .2em; margin-top: 16px; text-transform: uppercase; }
+  .bar { position: absolute; left: 0; bottom: 0; height: 8px; background: var(--accent); width: 0; }
+  .replay { position: fixed; right: 18px; bottom: 18px; z-index: 10; font: 700 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--paper); background: #111; border: 1px solid #333; padding: 10px 14px; cursor: pointer; opacity: 0; transition: opacity .3s; }
+  body.touched .replay { opacity: .85; }
+  .grain2 { position: absolute; inset: 0; opacity: .06; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+
+  <!-- 1 · Intro -->
+  <section class="scene" data-in="0" data-out="3.4">
+    <div class="strip" style="top:0"><div><span>La calle también tiene su pasarela</span><span>✦</span><span>Street Season FW26</span><span>✦</span><span>La calle también tiene su pasarela</span><span>✦</span><span>Street Season FW26</span><span>✦</span></div></div>
+    <div class="intro-word"><span>V</span><span>I</span><span>B</span><span>R</span><span>A</span></div>
+    <div class="pad up" style="bottom:300px">
+      <p class="k">Te curras el fit…</p>
+      <p class="big">y lo ven <span class="ac">cuatro</span> personas</p>
+    </div>
+  </section>
+
+  <!-- 2 · La frase -->
+  <section class="scene" data-in="3.4" data-out="7.6">
+    <div class="pad up" style="top:520px">
+      <p class="k">Esto es VIBRA</p>
+      <p class="big">La calle<br><span class="se ac">también</span><br>tiene su<br>pasarela</p>
+      <p class="sub">La comunidad donde el streetwear desfila de verdad.</p>
+    </div>
+  </section>
+
+  <!-- 3 · El feed -->
+  <section class="scene" data-in="7.6" data-out="12.6">
+    <div class="grid3">
+      <% for (let i = 0; i < 12; i++) { const l = looks[i % Math.max(1, looks.length)]; %>
+        <figure><% if (l) { %><img src="<%= media(l.thumb) %>" alt=""><% } %></figure>
+      <% } %>
+    </div>
+    <div class="veil"></div>
+    <div class="pad up" style="bottom:280px">
+      <p class="k">Sube tu look</p>
+      <p class="big">Fotos, marcas<br>y <span class="ac">créditos</span></p>
+      <p class="sub">Como una ficha de desfile: cada outfit tiene su número de look.</p>
+    </div>
+  </section>
+
+  <!-- 4 · Modo pasarela -->
+  <section class="scene" data-in="12.6" data-out="18">
+    <div class="runway-shot">
+      <% for (let i = 0; i < 3; i++) { const l = looks[(i + 1) % Math.max(1, looks.length)]; %>
+        <% if (l) { %><img src="<%= media(l.file) %>" alt=""><% } %>
+      <% } %>
+    </div>
+    <div class="veil"></div>
+    <div class="rail">
+      <i data-hit><%- icon('bookmark') %></i>
+      <i><%- icon('folder') %></i>
+      <i><%- icon('share') %></i>
+    </div>
+    <div class="pad up" style="bottom:260px">
+      <p class="k">Modo pasarela</p>
+      <p class="big">Un look,<br>toda la <span class="ac">pantalla</span></p>
+    </div>
+  </section>
+
+  <!-- 5 · Guardados y colecciones -->
+  <section class="scene" data-in="18" data-out="22.4">
+    <div class="tickets2">
+      <% ['Invierno 26', 'Para copiar', 'Grails'].forEach((name, i) => { %>
+        <div class="tk" style="--r: <%= i === 1 ? 0 : (i === 0 ? -3 : 3) %>deg">
+          <div class="cov"><% for (let k = 0; k < 4; k++) { const l = looks[(i * 2 + k) % Math.max(1, looks.length)]; %><% if (l) { %><img src="<%= media(l.thumb) %>" alt=""><% } %><% } %></div>
+          <b><%= name %></b><span>Colección</span>
+        </div>
+      <% }) %>
+    </div>
+    <div class="pad up" style="bottom:240px">
+      <p class="k">Guarda y colecciona</p>
+      <p class="big">Tu moodboard<br>de <span class="ac">calle</span></p>
+      <p class="sub">Como los guardados de TikTok, pero solo de ropa.</p>
+    </div>
+  </section>
+
+  <!-- 6 · OG -->
+  <section class="scene" data-in="22.4" data-out="26.6">
+    <div class="og-big"><div>OG</div></div>
+    <div class="pad up" style="bottom:300px">
+      <p class="k">Solo los primeros</p>
+      <p class="big">Las <span class="ac">2500</span><br>primeras cuentas<br>son OG para<br>siempre</p>
+    </div>
+  </section>
+
+  <!-- 7 · Cierre -->
+  <section class="scene" data-in="26.6" data-out="30.5">
+    <div class="strip" style="top:0"><div><span>Únete gratis</span><span>✦</span><span>La calle también tiene su pasarela</span><span>✦</span><span>Únete gratis</span><span>✦</span><span>La calle también tiene su pasarela</span><span>✦</span></div></div>
+    <div class="end">
+      <div>
+        <p class="logo2">VIBRA</p>
+        <p class="big" style="font-size:64px"><span class="se ac">la calle también tiene su pasarela</span></p>
+        <p class="url"><%= config.siteUrl.replace(/^https?:\/\//, '') %></p>
+        <p class="bio">Enlace en la bio</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="grain2"></div>
+  <div class="bar" id="bar"></div>
+</div>
+<button class="replay" id="replay">Repetir ⟲</button>
+
+<script nonce="<%= nonce %>">
+  const DUR = 30.5;
+  const stage = document.getElementById('stage');
+  const bar = document.getElementById('bar');
+  const scenes = [...document.querySelectorAll('.scene')];
+
+  // Escala el lienzo 1080x1920 al tamaño real de la pantalla
+  const fit = () => {
+    const s = Math.min(innerWidth / 1080, innerHeight / 1920);
+    const x = (innerWidth - 1080 * s) / 2, y = (innerHeight - 1920 * s) / 2;
+    stage.style.transform = `translate(${x}px, ${y}px) scale(${s})`;
+  };
+  addEventListener('resize', fit);
+  visualViewport?.addEventListener('resize', fit);
+  fit();
+
+  let t0 = 0, raf = 0;
+  function frame(now) {
+    const t = (now - t0) / 1000;
+    scenes.forEach((s) => {
+      const on = t >= +s.dataset.in && t < +s.dataset.out;
+      if (on !== s.classList.contains('on')) s.classList.toggle('on', on);
+    });
+    fit(); // se reajusta solo si giras el móvil o cambia el tamaño
+    bar.style.width = Math.min(100, (t / DUR) * 100) + '%';
+    // El marcador se "pulsa" a mitad de la escena de pasarela
+    const hit = document.querySelector('[data-hit]');
+    if (hit) hit.classList.toggle('hit', t > 15.4 && t < 16.2);
+    if (t < DUR) raf = requestAnimationFrame(frame);
+  }
+  function play() {
+    cancelAnimationFrame(raf);
+    scenes.forEach((s) => s.classList.remove('on'));
+    requestAnimationFrame((now) => { t0 = now; raf = requestAnimationFrame(frame); });
+  }
+  document.getElementById('replay').addEventListener('click', (e) => { e.stopPropagation(); play(); });
+
+  // Un toque en cualquier parte: pantalla completa y a reproducir (ideal para grabar)
+  document.body.addEventListener('click', () => {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => {});
+    play();
+  });
+  // El botón sólo se ve si mueves el ratón o tocas: no sale en la grabación
+  let hide;
+  const reveal = () => {
+    document.body.classList.add('touched');
+    clearTimeout(hide);
+    hide = setTimeout(() => document.body.classList.remove('touched'), 2500);
+  };
+  addEventListener('mousemove', reveal);
+  addEventListener('keydown', (e) => { if (e.key === 'r' || e.key === ' ') play(); });
+  setTimeout(play, 600);
+</script>
+</body>
+</html>

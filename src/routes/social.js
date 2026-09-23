@@ -124,4 +124,15 @@ export function followingFeed(req, res) {
 
 r.get('/siguiendo', requireAuth, followingFeed);
 
+/* ═══════════════ Vídeo de promoción que se reproduce solo ═══════════════
+   Página en formato vertical pensada para grabar la pantalla y publicarla
+   en TikTok o Reels sin editar nada. No se enlaza ni se indexa. */
+r.get('/promo', (req, res) => {
+  const looks = db.prepare(`
+    SELECT pi.file, pi.thumb FROM post_images pi JOIN posts p ON p.id = pi.post_id JOIN users u ON u.id = p.user_id
+    WHERE p.status = 'published' AND u.status = 'active' AND pi.position = 0
+    ORDER BY p.save_count DESC, p.created_at DESC LIMIT 12`).all();
+  res.render('promo', { looks, meta: { title: 'Vídeo de promoción', noindex: true } });
+});
+
 export default r;
