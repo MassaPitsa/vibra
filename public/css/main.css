@@ -764,3 +764,9 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
 .brand-chip:hover i { color: var(--ink); }
 .profile-stats a.stat { transition: color .2s; }
 .profile-stats a.stat:hover { color: var(--accent); }
+
+/* ───────────── Distintivo OG (miembros fundadores) ───────────── */
+.og-badge { display: inline-flex; align-items: center; justify-content: center; font: 700 9px/1 var(--mono); letter-spacing: .1em; background: var(--accent); color: var(--ink); padding: 3px 5px; vertical-align: middle; border-radius: 2px; }
+.og-badge--lg { font-size: 13px; padding: 6px 8px; vertical-align: 0.25em; }
+.og-left { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--accent); color: var(--accent); padding: 8px 14px; border-radius: 999px; font: 700 11px var(--mono); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 20px; }
+.og-left b { font-size: 14px; }

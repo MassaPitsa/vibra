@@ -54,7 +54,7 @@
           <% if (look.avatar) { %><img class="avatar" src="<%= media(look.avatar) %>" alt="" width="44" height="44" style="width:44px;height:44px"><% } else { %><span class="avatar" style="width:44px;height:44px"><%= look.username[0].toUpperCase() %></span><% } %>
         </a>
         <div>
-          <b><a href="/u/<%= look.username %>" class="link-u"><%= look.display_name || look.username %></a></b>
+          <b><a href="/u/<%= look.username %>" class="link-u"><%= look.display_name || look.username %></a><% if (look.og) { %> <span class="og-badge" title="Miembro fundador">OG</span><% } %></b>
           <span>@<%= look.username %><% if (look.city) { %> · <%- icon('pin') .replace('<svg', '<svg style="width:11px;height:11px;vertical-align:-1px"') %> <a href="/?ciudad=<%= encodeURIComponent(look.city) %>" class="link-u"><%= look.city %></a><% } %> · <%= timeAgo(look.created_at) %></span>
         </div>
       </div>

@@ -7,7 +7,7 @@
       <% if (profile.avatar) { %><img class="avatar avatar--lg" src="<%= media(profile.avatar) %>" alt="Foto de perfil de @<%= profile.username %>" width="116" height="116"><% } else { %><span class="avatar avatar--lg"><%= profile.username[0].toUpperCase() %></span><% } %>
       <div style="flex:1;min-width:240px">
         <span class="kicker kicker--accent">Modelo desde <%= new Intl.DateTimeFormat('es-ES', { month: 'long', year: 'numeric' }).format(profile.created_at) %><% if (profile.city) { %> · <%= profile.city %><% } %></span>
-        <h1 class="display"><%= profile.display_name || profile.username %></h1>
+        <h1 class="display"><%= profile.display_name || profile.username %><% if (profile.og) { %> <span class="og-badge og-badge--lg" title="Uno de los 2.500 primeros">OG</span><% } %></h1>
         <span class="mono muted">@<%= profile.username %></span>
         <% if (profile.bio) { %><p class="profile-head__bio"><%= profile.bio %></p><% } %>
         <% if (profile.instagram) { %><p style="margin:10px 0 0"><a class="link-u mono" style="font-size:13px" href="https://instagram.com/<%= encodeURIComponent(profile.instagram) %>" target="_blank" rel="noopener nofollow ugc">Instagram · @<%= profile.instagram %> ↗</a></p><% } %>

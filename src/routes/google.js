@@ -3,7 +3,7 @@ import { Router } from 'express';
 import { db, now } from '../db.js';
 import { config } from '../config.js';
 import { limiters, safeNext, randomToken } from '../security.js';
-import { clean, usernameProblem, httpError } from '../util.js';
+import { clean, usernameProblem, httpError, OG_LIMIT } from '../util.js';
 import { TERMS_VERSION, loginSession } from './auth.js';
 
 /**
@@ -152,10 +152,11 @@ r.post('/registro/google', limiters.register, async (req, res, next) => {
 
     const t = now();
     const role = config.adminEmail && p.email === config.adminEmail ? 'admin' : 'user';
+    const og = db.prepare('SELECT COUNT(*) AS n FROM users').get().n < OG_LIMIT ? 1 : 0;
     const { lastInsertRowid } = db.prepare(`INSERT INTO users
-      (username, email, password_hash, google_sub, email_verified, display_name, role, terms_version, terms_accepted_at, created_at)
-      VALUES (?, ?, '', ?, 1, ?, ?, ?, ?, ?)`)
-      .run(username, p.email, p.sub, p.name || username, role, TERMS_VERSION, t, t);
+      (username, email, password_hash, google_sub, email_verified, display_name, role, og, terms_version, terms_accepted_at, created_at)
+      VALUES (?, ?, '', ?, 1, ?, ?, ?, ?, ?, ?)`)
+      .run(username, p.email, p.sub, p.name || username, role, og, TERMS_VERSION, t, t);
 
     delete req.session.pendingGoogle;
     await loginSession(req, Number(lastInsertRowid));

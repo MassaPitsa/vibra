@@ -8,7 +8,7 @@ const IMAGES_SQL = `(SELECT json_group_array(json_object('file', file, 'thumb', 
 const BASE_SELECT = (userId) => `
   SELECT p.id, p.user_id, p.title, p.description, p.city, p.tags, p.pieces, p.status, p.removal_reason,
          p.save_count, p.view_count, p.created_at,
-         u.username, u.display_name, u.avatar,
+         u.username, u.display_name, u.avatar, u.og,
          ${IMAGES_SQL},
          ${userId ? 'EXISTS(SELECT 1 FROM saves s WHERE s.user_id = ' + Number(userId) + ' AND s.post_id = p.id)' : '0'} AS saved
   FROM posts p JOIN users u ON u.id = p.user_id`;

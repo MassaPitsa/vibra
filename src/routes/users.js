@@ -15,7 +15,7 @@ const r = Router();
 r.get('/u/:username', (req, res, next) => {
   const username = String(req.params.username).toLowerCase();
   if (!USERNAME_RE.test(username)) return next(httpError(404, 'No encontrado'));
-  const profile = db.prepare(`SELECT id, username, display_name, bio, city, instagram, avatar, created_at, status FROM users WHERE username = ?`).get(username);
+  const profile = db.prepare(`SELECT id, username, display_name, bio, city, instagram, avatar, og, created_at, status FROM users WHERE username = ?`).get(username);
   if (!profile || profile.status !== 'active') return next(httpError(404, 'No encontrado'));
   const isMe = req.user?.id === profile.id;
   const looks = userLooks(profile.id, req.user?.id, { includeHidden: isMe });

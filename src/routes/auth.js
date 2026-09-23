@@ -3,13 +3,16 @@ import { db, now } from '../db.js';
 import { config } from '../config.js';
 import { sessionStore } from '../session-store.js';
 import { hashPassword, verifyPassword, passwordProblem, limiters, safeNext, randomToken, sha256, verifyTurnstile } from '../security.js';
-import { clean, usernameProblem, EMAIL_RE } from '../util.js';
+import { clean, usernameProblem, EMAIL_RE, OG_LIMIT } from '../util.js';
 import { sendMail } from '../mailer.js';
 
 export const TERMS_VERSION = '2026-09';
 const r = Router();
 
 const meta = (title) => ({ title, noindex: true });
+
+/** Plazas OG que quedan libres. */
+const ogLeft = () => Math.max(0, OG_LIMIT - db.prepare('SELECT COUNT(*) AS n FROM users').get().n);
 
 /** Inicia sesión regenerando el identificador (previene fijación de sesión). */
 export const loginSession = (req, userId) => login(req, userId);
@@ -27,7 +30,7 @@ function login(req, userId) {
 /* ───────────── Registro ───────────── */
 r.get('/registro', (req, res) => {
   if (req.user) return res.redirect('/');
-  res.render('auth/register', { meta: meta('Crear cuenta'), form: {}, error: null, next: safeNext(req.query.next) });
+  res.render('auth/register', { meta: meta('Crear cuenta'), form: {}, error: null, next: safeNext(req.query.next), ogLeft: ogLeft() });
 });
 
 r.post('/registro', limiters.register, async (req, res, next) => {
@@ -37,7 +40,7 @@ r.post('/registro', limiters.register, async (req, res, next) => {
       email: clean(req.body.email, 254).toLowerCase(),
     };
     const nextUrl = safeNext(req.body.next);
-    const fail = (error, status = 400) => res.status(status).render('auth/register', { meta: meta('Crear cuenta'), form, error, next: nextUrl });
+    const fail = (error, status = 400) => res.status(status).render('auth/register', { meta: meta('Crear cuenta'), form, error, next: nextUrl, ogLeft: ogLeft() });
 
     if (req.body.website) return fail('No se pudo completar el registro.'); // honeypot anti-bots
     const password = typeof req.body.password === 'string' ? req.body.password : '';
@@ -58,10 +61,11 @@ r.post('/registro', limiters.register, async (req, res, next) => {
     if (exists) return fail('No se pudo crear la cuenta con esos datos. Si ya tienes cuenta, inicia sesión o recupera tu contraseña.');
 
     const hash = await hashPassword(password);
+    const og = db.prepare('SELECT COUNT(*) AS n FROM users').get().n < OG_LIMIT ? 1 : 0;
     const t = now();
     // El alta por email nunca da administrador: el correo aún no está verificado.
-    const { lastInsertRowid } = db.prepare(`INSERT INTO users (username, email, password_hash, display_name, role, terms_version, terms_accepted_at, created_at)
-      VALUES (?, ?, ?, ?, 'user', ?, ?, ?)`).run(form.username, form.email, hash, form.username, TERMS_VERSION, t, t);
+    const { lastInsertRowid } = db.prepare(`INSERT INTO users (username, email, password_hash, display_name, role, og, terms_version, terms_accepted_at, created_at)
+      VALUES (?, ?, ?, ?, 'user', ?, ?, ?, ?)`).run(form.username, form.email, hash, form.username, og, TERMS_VERSION, t, t);
 
     await login(req, Number(lastInsertRowid));
     req.session.flash = { type: 'ok', msg: `Bienvenid@ a la pasarela, @${form.username}.` };

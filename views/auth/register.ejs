@@ -11,12 +11,15 @@
         <div class="pass__name" data-pass-name>@<%= form.username || 'tu_usuario' %></div>
       </div>
       <div class="pass__bar"></div>
-      <div class="pass__strip">Model · <%= config.siteName %></div>
+      <div class="pass__strip"><%= typeof ogLeft !== 'undefined' && ogLeft > 0 ? 'OG Member · ' : 'Model · ' %><%= config.siteName %></div>
     </div>
   </section>
   <section class="auth__form">
     <h1 class="display">Crea tu pase</h1>
-    <p class="muted" style="margin:0 0 28px">Gratis. Sin invitación. Sólo necesitas estilo.</p>
+    <p class="muted" style="margin:0 0 20px">Gratis. Sin invitación. Sólo necesitas estilo.</p>
+    <% if (typeof ogLeft !== 'undefined' && ogLeft > 0) { %>
+      <div class="og-left">Quedan <b><%= ogLeft.toLocaleString('es-ES') %></b> pases OG</div>
+    <% } %>
     <% if (error) { %><div class="form-error" role="alert"><%= error %></div><% } %>
     <%- include('../partials/google-btn', { next }) %>
     <form method="post" action="/registro" novalidate>

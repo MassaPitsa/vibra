@@ -27,7 +27,7 @@
     <div>
       <h3 class="card__title"><%= look.title %></h3>
       <div class="card__by">
-        <a href="/u/<%= look.username %>" style="position:relative;z-index:2">@<%= look.username %></a>
+        <a href="/u/<%= look.username %>" style="position:relative;z-index:2">@<%= look.username %></a><% if (look.og) { %><span class="og-badge" title="Miembro fundador">OG</span><% } %>
         <% if (look.city) { %><span>· <%= look.city %></span><% } %>
       </div>
     </div>
