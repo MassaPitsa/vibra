@@ -155,7 +155,17 @@ Cómo se comporta: si el email de Google ya existe en VIBRA, se enlaza con esa c
 
 ---
 
-## 8. Estructura
+## 8. Vídeo de promoción (`/promo`)
+
+Esa ruta reproduce sola una secuencia vertical de 30 s con la identidad de la web: grabas la pantalla del móvil y ya tienes vídeo para TikTok o Reels, sin editar nada.
+
+Las fotos que usa, por orden de prioridad:
+
+1. Los **looks reales** más guardados (en cuanto haya 4 publicados).
+2. Las fotos que dejes en `promo-origen/` y proceses con `npm run promo-pack`. Usa bancos con licencia comercial (Pexels, Unsplash); **nunca Pinterest ni Instagram**: son imágenes con derechos de autor de terceros.
+3. Unos fondos abstractos generados, para que nunca se vea vacío.
+
+## 9. Estructura
 
 ```
 src/            servidor (Express 5 + SQLite nativo de Node)

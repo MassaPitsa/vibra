@@ -1,10 +1,13 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { Router } from 'express';
 import { db, now } from '../db.js';
 import { requireAuth, limiters } from '../security.js';
 import { feed, hydrate } from '../queries.js';
 import { listNotifications, markAllRead, notify } from '../notifications.js';
 import { brandName, topBrands } from '../brands.js';
-import { clean, intParam, httpError, USERNAME_RE } from '../util.js';
+import { clean, intParam, httpError, USERNAME_RE, OG_LIMIT } from '../util.js';
+import { ROOT } from '../config.js';
 
 const r = Router();
 
@@ -132,7 +135,11 @@ r.get('/promo', (req, res) => {
     SELECT pi.file, pi.thumb FROM post_images pi JOIN posts p ON p.id = pi.post_id JOIN users u ON u.id = p.user_id
     WHERE p.status = 'published' AND u.status = 'active' AND pi.position = 0
     ORDER BY p.save_count DESC, p.created_at DESC LIMIT 12`).all();
-  res.render('promo', { looks, meta: { title: 'Vídeo de promoción', noindex: true } });
+  // Fotos de ambiente con licencia libre (npm run promo-pack) para cuando aún no hay looks.
+  const carpeta = (dir, url) => { try { return fs.readdirSync(path.join(ROOT, 'public', dir)).filter((f) => f.endsWith('.webp')).sort().map((f) => url + f); } catch { return []; } };
+  const promoPack = carpeta('promo', '/static/promo/').length ? carpeta('promo', '/static/promo/') : carpeta('promo-bg', '/static/promo-bg/');
+  const ogLeft = Math.max(0, OG_LIMIT - db.prepare('SELECT COUNT(*) AS n FROM users').get().n);
+  res.render('promo', { looks, promoPack, ogLeft, meta: { title: 'Vídeo de promoción', noindex: true } });
 });
 
 export default r;

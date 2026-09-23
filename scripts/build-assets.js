@@ -37,3 +37,23 @@ const og = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" vi
 </svg>`;
 await sharp(Buffer.from(og)).png().toFile(path.join(out, 'og.png'));
 console.log('Assets generados en', out);
+
+/* ───────── Fondos abstractos de respaldo para el vídeo /promo ───────── */
+const promoDir = path.join(out, '..', 'promo-bg');
+fs.mkdirSync(promoDir, { recursive: true });
+const tonos = [['#1c1c22', '#3a2b2b'], ['#101418', '#2a2f38'], ['#201417', '#3d1f22'], ['#14181a', '#28343a'], ['#1a1614', '#3a3028'], ['#0f1216', '#22262e']];
+for (const [i, [a, b]] of tonos.entries()) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920">
+    <defs>
+      <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient>
+      <filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4"/><feColorMatrix type="saturate" values="0"/></filter>
+    </defs>
+    <rect width="1080" height="1920" fill="url(#g)"/>
+    <rect width="1080" height="1920" filter="url(#n)" opacity="0.22"/>
+    <rect x="${80 + i * 40}" y="${300 + i * 90}" width="${520 - i * 20}" height="${900}" fill="#ff2d2d" opacity="0.05"/>
+    <circle cx="${300 + i * 90}" cy="${700 + i * 120}" r="${260 + i * 18}" fill="#efebe3" opacity="0.035"/>
+    <rect y="${1500 + i * 30}" width="1080" height="2" fill="#efebe3" opacity="0.08"/>
+  </svg>`;
+  await sharp(Buffer.from(svg)).webp({ quality: 74 }).toFile(path.join(promoDir, `bg-${i + 1}.webp`));
+}
+console.log('Fondos de /promo generados en', promoDir);

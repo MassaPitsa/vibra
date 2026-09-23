@@ -8,126 +8,189 @@
 <link rel="stylesheet" href="/static/css/main.css?v=1">
 <style>
   html, body { margin: 0; height: 100%; background: #000; overflow: hidden; cursor: none; }
-  /* Lienzo fijo 9:16: se escala al tamaño de la pantalla, así la grabación siempre encaja */
   .stage { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 0 0; background: var(--ink); overflow: hidden; }
-  .scene { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+  .scene { position: absolute; inset: 0; opacity: 0; pointer-events: none; will-change: opacity, transform; }
   .scene.on { opacity: 1; }
-  .pad { position: absolute; left: 70px; right: 70px; }
-  .k { font: 700 26px/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; background: var(--accent); color: var(--ink); padding: 10px 14px; display: inline-block; }
-  .big { font: 400 118px/.94 var(--display); text-transform: uppercase; color: var(--paper); margin: 26px 0 0; letter-spacing: -.01em; }
-  .big .ac { color: var(--accent); }
-  .big .se { font-family: var(--serif); font-style: italic; text-transform: none; }
-  .sub { font: 400 30px/1.4 var(--sans); color: var(--paper-2); margin-top: 26px; }
-  .up > * { opacity: 0; transform: translateY(46px); }
-  .scene.on .up > * { animation: up .8s var(--ease-out) forwards; }
-  .scene.on .up > :nth-child(2) { animation-delay: .12s; }
-  .scene.on .up > :nth-child(3) { animation-delay: .24s; }
-  .scene.on .up > :nth-child(4) { animation-delay: .36s; }
-  @keyframes up { to { opacity: 1; transform: none; } }
+  .pad { position: absolute; left: 64px; right: 64px; }
+  .k { font: 700 28px/1 var(--mono); letter-spacing: .22em; text-transform: uppercase; background: var(--accent); color: var(--ink); padding: 11px 16px; display: inline-block; }
+  .k.ghost { background: transparent; color: var(--accent); border: 2px solid var(--accent); }
+  .big { font: 400 124px/.92 var(--display); text-transform: uppercase; color: var(--paper); margin: 24px 0 0; letter-spacing: -.012em; }
+  .big.sm { font-size: 96px; }
+  .ac { color: var(--accent); }
+  .se { font-family: var(--serif); font-style: italic; text-transform: none; }
+  .sub { font: 500 32px/1.35 var(--sans); color: var(--paper-2); margin-top: 24px; }
+  .veil { position: absolute; inset: 0; background: linear-gradient(transparent 28%, rgba(10,10,10,.55) 52%, rgba(10,10,10,.96) 82%); }
+  .flash { position: absolute; inset: 0; background: var(--accent); opacity: 0; }
 
-  /* 1 · Intro */
-  .intro-word { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 6px; }
-  .intro-word span { display: inline-block; font: 400 260px/1 var(--display); color: var(--paper); }
-  .scene.on .intro-word span { animation: pop .7s var(--ease-out) backwards; }
-  .intro-word span:nth-child(2) { animation-delay: .07s; } .intro-word span:nth-child(3) { animation-delay: .14s; }
-  .intro-word span:nth-child(4) { animation-delay: .21s; } .intro-word span:nth-child(5) { animation-delay: .28s; }
-  @keyframes pop { from { opacity: 0; transform: translateY(70px) scale(.9); } }
-  .strip { position: absolute; left: 0; right: 0; height: 74px; background: var(--accent); color: var(--ink); display: flex; align-items: center; overflow: hidden; }
-  .strip div { display: flex; gap: 40px; white-space: nowrap; font: 700 26px var(--mono); letter-spacing: .18em; text-transform: uppercase; animation: slide 14s linear infinite; padding-left: 40px; }
-  @keyframes slide { to { transform: translateX(-50%); } }
+  /* Entradas rápidas y secas: nada de desvanecidos lentos */
+  .in > * { opacity: 0; transform: translateY(40px) skewY(2deg); }
+  .scene.on .in > * { animation: in .42s cubic-bezier(.2,.9,.2,1) forwards; }
+  .scene.on .in > :nth-child(2) { animation-delay: .09s; }
+  .scene.on .in > :nth-child(3) { animation-delay: .18s; }
+  .scene.on .in > :nth-child(4) { animation-delay: .27s; }
+  @keyframes in { to { opacity: 1; transform: none; } }
+  .scene.on .flash { animation: flash .5s steps(1) forwards; }
+  @keyframes flash { 0% { opacity: 1; } 12% { opacity: 0; } 20% { opacity: .9; } 30% { opacity: 0; } }
 
-  /* 3 · Rejilla de looks */
-  .grid3 { position: absolute; inset: -60px 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-  .grid3 figure { margin: 0; overflow: hidden; background: var(--ink-3); aspect-ratio: 3/4; }
+  /* Fotos con movimiento constante (Ken Burns) */
+  .shot { position: absolute; inset: 0; overflow: hidden; }
+  .shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; will-change: transform, opacity; }
+  .scene.on .shot img { animation: burns var(--d, 4s) linear forwards; animation-delay: var(--delay, 0s); }
+  @keyframes burns { 0% { opacity: 0; transform: scale(1.18) translateY(14px); } 4% { opacity: 1; } 92% { opacity: 1; } 100% { opacity: 0; transform: scale(1.02) translateY(0); } }
+
+  /* 1 · Gancho */
+  .hook { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; }
+  .hook p { font: 400 150px/.88 var(--display); text-transform: uppercase; color: var(--paper); margin: 0; padding: 0 60px; }
+  .scene.on .hook p span { display: inline-block; animation: kick .32s cubic-bezier(.2,1.6,.3,1) backwards; }
+  .scene.on .hook p span:nth-child(2) { animation-delay: .1s; }
+  .scene.on .hook p span:nth-child(3) { animation-delay: .2s; }
+  .scene.on .hook p span:nth-child(4) { animation-delay: .3s; }
+  @keyframes kick { from { opacity: 0; transform: scale(.4) rotate(-6deg); } }
+
+  /* 2 · Ráfaga de looks */
+  .burst { position: absolute; inset: 0; }
+  .burst img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
+  .scene.on .burst img { animation: cut 2.4s steps(1) forwards; }
+  .scene.on .burst img:nth-child(2) { animation-delay: .4s; }
+  .scene.on .burst img:nth-child(3) { animation-delay: .8s; }
+  .scene.on .burst img:nth-child(4) { animation-delay: 1.2s; }
+  .scene.on .burst img:nth-child(5) { animation-delay: 1.6s; }
+  .scene.on .burst img:nth-child(6) { animation-delay: 2s; }
+  @keyframes cut { 0% { opacity: 1; transform: scale(1.08); } 16% { opacity: 1; transform: scale(1); } 17% { opacity: 0; } 100% { opacity: 0; } }
+
+  /* 3 · Frase */
+  .phrase { position: absolute; left: 64px; right: 64px; top: 560px; }
+  .phrase span { display: block; font: 400 140px/.9 var(--display); text-transform: uppercase; color: var(--paper); overflow: hidden; }
+  .phrase span i { display: block; font-style: normal; transform: translateY(105%); }
+  .scene.on .phrase span i { animation: rise .5s cubic-bezier(.2,.9,.2,1) forwards; }
+  .scene.on .phrase span:nth-child(2) i { animation-delay: .1s; }
+  .scene.on .phrase span:nth-child(3) i { animation-delay: .2s; }
+  .scene.on .phrase span:nth-child(4) i { animation-delay: .3s; }
+  @keyframes rise { to { transform: none; } }
+
+  /* 4 · Rejilla del feed */
+  .grid3 { position: absolute; inset: -80px 32px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .grid3 figure { margin: 0; overflow: hidden; background: var(--ink-3); aspect-ratio: 3/4; position: relative; }
   .grid3 img { width: 100%; height: 100%; object-fit: cover; }
-  .scene.on .grid3 { animation: drift 9s linear forwards; }
-  @keyframes drift { from { transform: translateY(60px); } to { transform: translateY(-420px); } }
-  .veil { position: absolute; inset: 0; background: linear-gradient(transparent 35%, rgba(10,10,10,.92) 78%); }
+  .grid3 b { position: absolute; left: 8px; top: 8px; font: 700 15px var(--mono); background: rgba(10,10,10,.8); padding: 5px 7px; color: var(--paper); }
+  .scene.on .grid3 { animation: drift 4.4s cubic-bezier(.3,0,.5,1) forwards; }
+  @keyframes drift { from { transform: translateY(120px); } to { transform: translateY(-560px); } }
 
-  /* 4 · Modo pasarela */
-  .runway-shot { position: absolute; inset: 0; }
-  .runway-shot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
-  .scene.on .runway-shot img { animation: swap 5.4s linear forwards; }
-  .scene.on .runway-shot img:nth-child(2) { animation-delay: 1.8s; }
-  .scene.on .runway-shot img:nth-child(3) { animation-delay: 3.6s; }
-  @keyframes swap { 0% { opacity: 0; transform: scale(1.12); } 6% { opacity: 1; } 33% { opacity: 1; } 40% { opacity: 0; } 100% { opacity: 0; transform: scale(1); } }
-  .rail { position: absolute; right: 56px; bottom: 300px; display: flex; flex-direction: column; gap: 34px; align-items: center; }
-  .rail i { width: 92px; height: 92px; border-radius: 50%; border: 2px solid rgba(239,235,227,.5); display: grid; place-items: center; background: rgba(10,10,10,.45); }
-  .rail svg { width: 38px; height: 38px; color: var(--paper); }
-  .rail i.hit { background: var(--accent); border-color: var(--accent); animation: hit .6s var(--ease-out); }
+  /* 5 · Pasarela con acción de guardar */
+  .rail { position: absolute; right: 48px; bottom: 470px; display: flex; flex-direction: column; gap: 30px; align-items: center; }
+  .rail i { width: 104px; height: 104px; border-radius: 50%; border: 2px solid rgba(239,235,227,.55); display: grid; place-items: center; background: rgba(10,10,10,.42); backdrop-filter: blur(6px); }
+  .rail svg { width: 42px; height: 42px; color: var(--paper); }
+  .rail i.hit { background: var(--accent); border-color: var(--accent); animation: hit .5s cubic-bezier(.2,1.6,.3,1); }
   .rail i.hit svg { color: var(--ink); fill: var(--ink); }
-  @keyframes hit { 0% { transform: scale(1); } 40% { transform: scale(.7); } 100% { transform: scale(1); } }
+  @keyframes hit { 0% { transform: scale(1); } 35% { transform: scale(.68); } 100% { transform: scale(1); } }
+  .plus1 { position: absolute; right: 78px; bottom: 600px; font: 700 40px var(--mono); color: var(--accent); opacity: 0; }
+  .scene.on .plus1 { animation: fly 1.1s ease-out 1.5s forwards; }
+  @keyframes fly { 0% { opacity: 0; transform: translateY(0); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateY(-120px); } }
 
-  /* 5 · Colecciones */
-  .tickets2 { position: absolute; left: 70px; right: 70px; bottom: 420px; display: flex; gap: 22px; }
-  .tk { flex: 1; background: var(--ink-2); border: 1px solid var(--line-2); padding: 14px; transform: rotate(var(--r)); }
-  .tk .cov { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; aspect-ratio: 1; overflow: hidden; }
+  /* 6 · Colecciones */
+  .tickets2 { position: absolute; left: 56px; right: 56px; bottom: 520px; display: flex; gap: 18px; }
+  .tk { flex: 1; background: var(--ink-2); border: 1px solid var(--line-2); padding: 12px; transform: rotate(var(--r)); }
+  .tk .cov { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; aspect-ratio: 1; overflow: hidden; background: var(--ink-3); }
   .tk img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 1; }
-  .tk b { display: block; font: 400 34px/1 var(--display); text-transform: uppercase; color: var(--paper); margin-top: 14px; }
-  .tk span { font: 700 18px var(--mono); color: var(--muted); }
-  .scene.on .tk { animation: up .7s var(--ease-out) backwards; }
-  .scene.on .tk:nth-child(2) { animation-delay: .15s; } .scene.on .tk:nth-child(3) { animation-delay: .3s; }
+  .tk b { display: block; font: 400 32px/1 var(--display); text-transform: uppercase; color: var(--paper); margin-top: 12px; }
+  .tk span { font: 700 16px var(--mono); color: var(--muted); }
+  .scene.on .tk { animation: in .45s cubic-bezier(.2,.9,.2,1) backwards; }
+  .scene.on .tk:nth-child(2) { animation-delay: .12s; } .scene.on .tk:nth-child(3) { animation-delay: .24s; }
 
-  /* 6 · OG */
-  .og-big { position: absolute; inset: 0; display: grid; place-items: center; }
-  .og-big div { width: 460px; height: 460px; border-radius: 50%; background: var(--accent); display: grid; place-items: center; font: 400 190px/1 var(--display); color: var(--ink); }
-  .scene.on .og-big div { animation: stamp .8s var(--ease-out) backwards; }
-  @keyframes stamp { from { transform: scale(2.4) rotate(-14deg); opacity: 0; } }
+  /* 7 · El título OG en el perfil */
+  .profile { position: absolute; left: 64px; right: 64px; top: 420px; background: var(--ink-2); border: 1px solid var(--line-2); padding: 46px 40px; }
+  .profile .row { display: flex; align-items: center; gap: 28px; }
+  .profile .av { width: 136px; height: 136px; border-radius: 50%; background: var(--ink-3); border: 3px solid var(--accent); display: grid; place-items: center; font: 400 62px var(--display); color: var(--accent); }
+  .profile .nm { font: 400 66px/1 var(--display); text-transform: uppercase; color: var(--paper); display: flex; align-items: center; gap: 18px; }
+  .profile .at { font: 700 26px var(--mono); color: var(--muted); margin-top: 10px; display: block; }
+  .ogtag { font: 700 30px/1 var(--mono); letter-spacing: .12em; background: var(--accent); color: var(--ink); padding: 10px 14px; opacity: 0; }
+  .scene.on .ogtag { animation: stamp .55s cubic-bezier(.2,1.7,.3,1) .7s forwards; }
+  @keyframes stamp { from { opacity: 0; transform: scale(3) rotate(-16deg); } to { opacity: 1; transform: none; } }
+  .profile .stats { display: flex; gap: 46px; margin-top: 36px; }
+  .profile .stats div b { display: block; font: 400 52px/1 var(--display); color: var(--paper); }
+  .profile .stats div span { font: 700 18px var(--mono); color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .counter { position: absolute; left: 64px; right: 64px; bottom: 300px; text-align: center; }
+  .counter b { font: 400 120px/1 var(--display); color: var(--accent); }
+  .counter span { display: block; font: 700 26px var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--paper-2); margin-top: 10px; }
 
-  /* 7 · Cierre */
+  /* 8 · Cierre */
   .end { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; }
-  .end .logo2 { font: 400 250px/1 var(--display); color: var(--paper); }
-  .end .url { font: 700 40px var(--mono); color: var(--paper); letter-spacing: .06em; margin-top: 40px; }
-  .end .bio { font: 400 28px var(--mono); color: var(--muted); letter-spacing: .2em; margin-top: 16px; text-transform: uppercase; }
-  .bar { position: absolute; left: 0; bottom: 0; height: 8px; background: var(--accent); width: 0; }
+  .end .logo2 { font: 400 270px/1 var(--display); color: var(--paper); margin: 0; }
+  .end .ph { font: 400 58px/1 var(--serif); font-style: italic; color: var(--accent); margin: 10px 0 0; }
+  .end .url { font: 700 44px var(--mono); color: var(--ink); background: var(--paper); padding: 18px 26px; display: inline-block; margin-top: 52px; letter-spacing: .04em; }
+  .end .bio { font: 700 26px var(--mono); color: var(--muted); letter-spacing: .22em; margin-top: 22px; text-transform: uppercase; }
+  .scene.on .end .url { animation: pulse2 1.1s ease-in-out infinite alternate; }
+  @keyframes pulse2 { to { transform: scale(1.045); } }
+
+  .strip { position: absolute; left: 0; right: 0; height: 78px; background: var(--accent); color: var(--ink); display: flex; align-items: center; overflow: hidden; }
+  .strip div { display: flex; gap: 38px; white-space: nowrap; font: 700 28px var(--mono); letter-spacing: .16em; text-transform: uppercase; animation: slide 12s linear infinite; padding-left: 38px; }
+  @keyframes slide { to { transform: translateX(-50%); } }
+  .bar { position: absolute; left: 0; bottom: 0; height: 10px; background: var(--accent); width: 0; z-index: 5; }
+  .grain2 { position: absolute; inset: 0; opacity: .07; pointer-events: none; z-index: 4;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
   .replay { position: fixed; right: 18px; bottom: 18px; z-index: 10; font: 700 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--paper); background: #111; border: 1px solid #333; padding: 10px 14px; cursor: pointer; opacity: 0; transition: opacity .3s; }
   body.touched .replay { opacity: .85; }
-  .grain2 { position: absolute; inset: 0; opacity: .06; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 </style>
 </head>
 <body>
+<%
+  // Fotos: primero los looks reales; si aún no hay, el pack de promoción; si tampoco, degradados.
+  const pack = (typeof promoPack !== 'undefined' ? promoPack : []);
+  const pool = looks.length >= 4 ? looks.map((l) => media(l.file)) : pack;
+  const pic = (i) => pool.length ? pool[i % pool.length] : null;
+  const thumb = (i) => (looks.length >= 4 ? media(looks[i % looks.length].thumb) : pic(i));
+%>
 <div class="stage" id="stage">
 
-  <!-- 1 · Intro -->
-  <section class="scene" data-in="0" data-out="3.4">
-    <div class="strip" style="top:0"><div><span>La calle también tiene su pasarela</span><span>✦</span><span>Street Season FW26</span><span>✦</span><span>La calle también tiene su pasarela</span><span>✦</span><span>Street Season FW26</span><span>✦</span></div></div>
-    <div class="intro-word"><span>V</span><span>I</span><span>B</span><span>R</span><span>A</span></div>
-    <div class="pad up" style="bottom:300px">
-      <p class="k">Te curras el fit…</p>
-      <p class="big">y lo ven <span class="ac">cuatro</span> personas</p>
-    </div>
+  <!-- 1 · Gancho (0 → 2.2) -->
+  <section class="scene" data-in="0" data-out="2.2">
+    <% if (pic(0)) { %><div class="shot" style="--d:2.4s"><img src="<%= pic(0) %>" alt=""></div><div class="veil" style="background:rgba(10,10,10,.62)"></div><% } %>
+    <div class="flash"></div>
+    <div class="hook"><p><span>TU</span> <span>FIT</span> <span class="ac">MERECE</span> <span>MÁS</span></p></div>
+    <div class="pad" style="bottom:360px;text-align:center"><p class="k">que una story de 24 horas</p></div>
   </section>
 
-  <!-- 2 · La frase -->
-  <section class="scene" data-in="3.4" data-out="7.6">
-    <div class="pad up" style="top:520px">
+  <!-- 2 · Ráfaga (2.2 → 4.8) -->
+  <section class="scene" data-in="2.2" data-out="4.8">
+    <div class="burst">
+      <% for (let i = 0; i < 6; i++) { if (pic(i)) { %><img src="<%= pic(i) %>" alt=""><% } } %>
+    </div>
+    <div class="veil"></div>
+    <div class="pad in" style="bottom:300px">
       <p class="k">Esto es VIBRA</p>
-      <p class="big">La calle<br><span class="se ac">también</span><br>tiene su<br>pasarela</p>
-      <p class="sub">La comunidad donde el streetwear desfila de verdad.</p>
+      <p class="big">La comunidad<br>donde la calle<br><span class="ac">desfila</span></p>
     </div>
   </section>
 
-  <!-- 3 · El feed -->
-  <section class="scene" data-in="7.6" data-out="12.6">
+  <!-- 3 · La frase (4.8 → 8) -->
+  <section class="scene" data-in="4.8" data-out="8">
+    <div class="phrase">
+      <span><i>La calle</i></span>
+      <span><i class="se ac">también</i></span>
+      <span><i>tiene su</i></span>
+      <span><i>pasarela</i></span>
+    </div>
+    <div class="pad in" style="bottom:320px"><p class="sub">Sin invitación, sin cuerda de terciopelo, sin postureo de revista.</p></div>
+  </section>
+
+  <!-- 4 · Sube tu look (8 → 12.4) -->
+  <section class="scene" data-in="8" data-out="12.4">
     <div class="grid3">
-      <% for (let i = 0; i < 12; i++) { const l = looks[i % Math.max(1, looks.length)]; %>
-        <figure><% if (l) { %><img src="<%= media(l.thumb) %>" alt=""><% } %></figure>
+      <% for (let i = 0; i < 12; i++) { %>
+        <figure><% if (thumb(i)) { %><img src="<%= thumb(i) %>" alt=""><% } %><b>Nº <%= String(i + 1).padStart(3, '0') %></b></figure>
       <% } %>
     </div>
     <div class="veil"></div>
-    <div class="pad up" style="bottom:280px">
+    <div class="pad in" style="bottom:270px">
       <p class="k">Sube tu look</p>
-      <p class="big">Fotos, marcas<br>y <span class="ac">créditos</span></p>
-      <p class="sub">Como una ficha de desfile: cada outfit tiene su número de look.</p>
+      <p class="big sm">Cada outfit<br>con su <span class="ac">número</span><br>y sus marcas</p>
     </div>
   </section>
 
-  <!-- 4 · Modo pasarela -->
-  <section class="scene" data-in="12.6" data-out="18">
-    <div class="runway-shot">
-      <% for (let i = 0; i < 3; i++) { const l = looks[(i + 1) % Math.max(1, looks.length)]; %>
-        <% if (l) { %><img src="<%= media(l.file) %>" alt=""><% } %>
-      <% } %>
+  <!-- 5 · Modo pasarela (12.4 → 16.6) -->
+  <section class="scene" data-in="12.4" data-out="16.6">
+    <div class="shot">
+      <% for (let i = 0; i < 3; i++) { if (pic(i + 2)) { %><img src="<%= pic(i + 2) %>" style="--d:1.5s;--delay:<%= i * 1.35 %>s" alt=""><% } } %>
     </div>
     <div class="veil"></div>
     <div class="rail">
@@ -135,49 +198,66 @@
       <i><%- icon('folder') %></i>
       <i><%- icon('share') %></i>
     </div>
-    <div class="pad up" style="bottom:260px">
+    <div class="plus1">+1</div>
+    <div class="pad in" style="bottom:270px">
       <p class="k">Modo pasarela</p>
       <p class="big">Un look,<br>toda la <span class="ac">pantalla</span></p>
     </div>
   </section>
 
-  <!-- 5 · Guardados y colecciones -->
-  <section class="scene" data-in="18" data-out="22.4">
+  <!-- 6 · Colecciones (16.6 → 20.4) -->
+  <section class="scene" data-in="16.6" data-out="20.4">
     <div class="tickets2">
       <% ['Invierno 26', 'Para copiar', 'Grails'].forEach((name, i) => { %>
         <div class="tk" style="--r: <%= i === 1 ? 0 : (i === 0 ? -3 : 3) %>deg">
-          <div class="cov"><% for (let k = 0; k < 4; k++) { const l = looks[(i * 2 + k) % Math.max(1, looks.length)]; %><% if (l) { %><img src="<%= media(l.thumb) %>" alt=""><% } %><% } %></div>
+          <div class="cov"><% for (let k = 0; k < 4; k++) { if (thumb(i * 3 + k)) { %><img src="<%= thumb(i * 3 + k) %>" alt=""><% } } %></div>
           <b><%= name %></b><span>Colección</span>
         </div>
       <% }) %>
     </div>
-    <div class="pad up" style="bottom:240px">
+    <div class="pad in" style="bottom:280px">
       <p class="k">Guarda y colecciona</p>
-      <p class="big">Tu moodboard<br>de <span class="ac">calle</span></p>
+      <p class="big sm">Tu moodboard<br>de <span class="ac">calle</span></p>
       <p class="sub">Como los guardados de TikTok, pero solo de ropa.</p>
     </div>
   </section>
 
-  <!-- 6 · OG -->
-  <section class="scene" data-in="22.4" data-out="26.6">
-    <div class="og-big"><div>OG</div></div>
-    <div class="pad up" style="bottom:300px">
-      <p class="k">Solo los primeros</p>
-      <p class="big">Las <span class="ac">2500</span><br>primeras cuentas<br>son OG para<br>siempre</p>
+  <!-- 7 · El título OG (20.4 → 25.4) -->
+  <section class="scene" data-in="20.4" data-out="25.4">
+    <div class="pad in" style="top:230px"><p class="k ghost">Solo para los primeros</p></div>
+    <div class="profile">
+      <div class="row">
+        <span class="av">T</span>
+        <div>
+          <span class="nm">tu_usuario <span class="ogtag">OG</span></span>
+          <span class="at">Miembro fundador · perfil verificado por antigüedad</span>
+        </div>
+      </div>
+      <div class="stats">
+        <div><b>12</b><span>Looks</span></div>
+        <div><b>340</b><span>Guardados</span></div>
+        <div><b>OG</b><span>Título</span></div>
+      </div>
+    </div>
+    <div class="counter in">
+      <p class="big sm" style="margin:0">El título <span class="ac">OG</span> en tu perfil</p>
+      <b data-og><%= ogLeft %></b>
+      <span>plazas libres de 2500</span>
     </div>
   </section>
 
-  <!-- 7 · Cierre -->
-  <section class="scene" data-in="26.6" data-out="30.5">
-    <div class="strip" style="top:0"><div><span>Únete gratis</span><span>✦</span><span>La calle también tiene su pasarela</span><span>✦</span><span>Únete gratis</span><span>✦</span><span>La calle también tiene su pasarela</span><span>✦</span></div></div>
+  <!-- 8 · Cierre (25.4 → 29.5) -->
+  <section class="scene" data-in="25.4" data-out="29.5">
+    <div class="strip" style="top:0"><div><span>Entra gratis</span><span>✦</span><span>Los 2500 primeros son OG</span><span>✦</span><span>Entra gratis</span><span>✦</span><span>Los 2500 primeros son OG</span><span>✦</span></div></div>
     <div class="end">
       <div>
         <p class="logo2">VIBRA</p>
-        <p class="big" style="font-size:64px"><span class="se ac">la calle también tiene su pasarela</span></p>
+        <p class="ph">la calle también tiene su pasarela</p>
         <p class="url"><%= config.siteUrl.replace(/^https?:\/\//, '') %></p>
-        <p class="bio">Enlace en la bio</p>
+        <p class="bio">Enlace en la bio · gratis</p>
       </div>
     </div>
+    <div class="strip" style="bottom:0"><div><span>Sube tu primer look hoy</span><span>✦</span><span>Sube tu primer look hoy</span><span>✦</span><span>Sube tu primer look hoy</span><span>✦</span></div></div>
   </section>
 
   <div class="grain2"></div>
@@ -186,12 +266,11 @@
 <button class="replay" id="replay">Repetir ⟲</button>
 
 <script nonce="<%= nonce %>">
-  const DUR = 30.5;
+  const DUR = 29.5;
   const stage = document.getElementById('stage');
   const bar = document.getElementById('bar');
   const scenes = [...document.querySelectorAll('.scene')];
 
-  // Escala el lienzo 1080x1920 al tamaño real de la pantalla
   const fit = () => {
     const s = Math.min(innerWidth / 1080, innerHeight / 1920);
     const x = (innerWidth - 1080 * s) / 2, y = (innerHeight - 1920 * s) / 2;
@@ -201,18 +280,24 @@
   visualViewport?.addEventListener('resize', fit);
   fit();
 
+  const ogTotal = Number(document.querySelector('[data-og]')?.textContent || 0);
   let t0 = 0, raf = 0;
   function frame(now) {
     const t = (now - t0) / 1000;
+    fit();
     scenes.forEach((s) => {
       const on = t >= +s.dataset.in && t < +s.dataset.out;
       if (on !== s.classList.contains('on')) s.classList.toggle('on', on);
     });
-    fit(); // se reajusta solo si giras el móvil o cambia el tamaño
     bar.style.width = Math.min(100, (t / DUR) * 100) + '%';
-    // El marcador se "pulsa" a mitad de la escena de pasarela
     const hit = document.querySelector('[data-hit]');
-    if (hit) hit.classList.toggle('hit', t > 15.4 && t < 16.2);
+    if (hit) hit.classList.toggle('hit', t > 14.1 && t < 14.9);
+    // Contador de plazas OG bajando: crea urgencia
+    const og = document.querySelector('[data-og]');
+    if (og && ogTotal) {
+      const p = Math.min(1, Math.max(0, (t - 22.2) / 2.2));
+      og.textContent = Math.round(ogTotal - Math.round(p * 7)).toLocaleString('es-ES');
+    }
     if (t < DUR) raf = requestAnimationFrame(frame);
   }
   function play() {
@@ -221,22 +306,18 @@
     requestAnimationFrame((now) => { t0 = now; raf = requestAnimationFrame(frame); });
   }
   document.getElementById('replay').addEventListener('click', (e) => { e.stopPropagation(); play(); });
-
-  // Un toque en cualquier parte: pantalla completa y a reproducir (ideal para grabar)
   document.body.addEventListener('click', () => {
     if (!document.fullscreenElement) document.documentElement.requestFullscreen?.().catch(() => {});
     play();
   });
-  // El botón sólo se ve si mueves el ratón o tocas: no sale en la grabación
   let hide;
-  const reveal = () => {
+  addEventListener('mousemove', () => {
     document.body.classList.add('touched');
     clearTimeout(hide);
     hide = setTimeout(() => document.body.classList.remove('touched'), 2500);
-  };
-  addEventListener('mousemove', reveal);
-  addEventListener('keydown', (e) => { if (e.key === 'r' || e.key === ' ') play(); });
-  setTimeout(play, 600);
+  });
+  // Espera a que carguen las fotos para que no se vea ningún hueco
+  Promise.all([...document.images].map((i) => i.decode().catch(() => {}))).then(() => setTimeout(play, 300));
 </script>
 </body>
 </html>
